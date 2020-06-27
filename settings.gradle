@@ -1,0 +1,9 @@
+include ':uikit'
+include ':yunxintest2'
+include ':yunxintest'
+include ':ajextest'
+include ':mysqltest3'
+include ':mysqltest2'
+include ':mysqltest'
+include ':app'
+rootProject.name = "Adroid Exercitation"

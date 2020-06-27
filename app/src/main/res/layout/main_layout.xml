@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ImageButton
+        android:id="@+id/ib_login_return"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:scaleType="centerInside"
+        android:src="@drawable/back"/>
+
+    <TextView
+        android:id="@+id/info_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text"
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/info_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text"
+        android:textSize="30sp"
+        android:layout_marginTop="36dp"
+        android:layout_below="@+id/info_username"
+        android:layout_alignLeft="@+id/info_username"
+        android:layout_alignStart="@+id/info_username" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/btn_send"
+        android:layout_below="@+id/info_password"
+        android:text="发送"/>
+
+
+</RelativeLayout>
