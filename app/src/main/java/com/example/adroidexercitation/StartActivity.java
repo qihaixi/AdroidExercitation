@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 
 public class StartActivity extends Activity {
     private ImageView pic_bg;
-    private int check_auto_login = 0;
     User user;
 
     @Override
@@ -70,7 +69,7 @@ public class StartActivity extends Activity {
     }
 
     public void LoginSuccess(){
-        Log.i("tag","成功");
+        //Log.i("tag","成功");
         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
         intent.putExtra("username",user.getUsername());
         intent.putExtra("password",user.getPassword());
@@ -79,7 +78,7 @@ public class StartActivity extends Activity {
     }
 
     public void LoginFail() {
-        Log.i("tag","失败");
+        //Log.i("tag","失败");
         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
         intent.putExtra("null","null");
         startActivity(intent);
