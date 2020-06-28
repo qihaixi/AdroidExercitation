@@ -33,8 +33,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import java.util.Objects;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
-    private TextView mBtnLogin;
-    private Button signUp;
+    private TextView tvLogin, tvSignUp, tvFindPsw;
     private EditText username, password;
     private View progress;
     private View inputLayout;
@@ -89,11 +88,13 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         username = findViewById(R.id.et_username);
         password = findViewById(R.id.et_password);
-        mBtnLogin = findViewById(R.id.main_btn_login);
-        signUp = findViewById(R.id.btn_signup);
+        tvLogin = findViewById(R.id.main_btn_login);
+        tvSignUp = findViewById(R.id.tv_signup);
+        tvFindPsw = findViewById(R.id.tv_find_password);
         //登录注册按钮监听
-        mBtnLogin.setOnClickListener(this);
-        signUp.setOnClickListener(this);
+        tvLogin.setOnClickListener(this);
+        tvSignUp.setOnClickListener(this);
+        tvFindPsw.setOnClickListener(this);
     }
 
     @Override
@@ -124,11 +125,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     finish();
                 }
                 break;
-            case R.id.btn_signup:
+            case R.id.tv_signup:
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
                 break;
             default:
                 break;

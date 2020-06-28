@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/tv_find_password"
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="35dp"
+        android:layout_toStartOf="@+id/view"
+        android:textStyle="bold"
+        android:textColor="#00CED1"
+        android:text="忘记密码" />
+    <View
+        android:id="@+id/view"
+        android:layout_width="1dp"
+        android:layout_height="13dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:background="#00CED1" />
+
+    <TextView
+        android:id="@+id/tv_signup"
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="27dp"
+        android:layout_toEndOf="@+id/view"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textColor="#00CED1"
+        android:text="用户注册" />
+
+</RelativeLayout>

@@ -6,21 +6,11 @@
     android:background="@drawable/main_background"
     tools:context=".login.LoginActivity" >
 
-    <Button
-        android:id="@+id/btn_signup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="-8dp"
-        android:background="#00000000"
-        android:text="Sign up"
-        android:textColor="#006e7b"
-        android:textSize="15sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_signup"
+        android:paddingTop="60dp"
         android:layout_marginTop="25dp"
         android:orientation="vertical" >
 
@@ -49,8 +39,10 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/login_rela"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="20dp"
         android:layout_centerInParent="true" >
 
         <include
@@ -83,5 +75,16 @@
             android:textColor="#ffffff"
             android:textSize="20sp" />
     </RelativeLayout>
+
+        <include
+            android:id="@+id/bottom_layout"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="130dp"
+            android:layout_below="@+id/login_rela"
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            layout="@layout/bottom_login"/>
+
 
 </RelativeLayout>

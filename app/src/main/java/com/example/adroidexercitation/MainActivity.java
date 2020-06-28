@@ -74,15 +74,15 @@ public class MainActivity extends AppCompatActivity {
 
     //初始化视图
     private void initView() {
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mRlMenu = (RelativeLayout) findViewById(R.id.rl_menu);
-        mLlContentMain = (TabHost) findViewById(R.id.th_content_main);
-        mRlTitle = (RelativeLayout) findViewById(R.id.rl_title);
-        mCivHead = (CircleImageView) findViewById(R.id.civ_head);
-        mTvTitle = (TextView) findViewById(R.id.tv_title);
-        mIvAdd = (ImageView) findViewById(R.id.iv_add);
-        mTvAdd = (TextView) findViewById(R.id.tv_add);
-        mTvMore = (TextView) findViewById(R.id.tv_more);
+        mDrawer = findViewById(R.id.drawer_layout);
+        mRlMenu = findViewById(R.id.rl_menu);
+        mLlContentMain = findViewById(R.id.th_content_main);
+        mRlTitle = findViewById(R.id.rl_title);
+        mCivHead = findViewById(R.id.civ_head);
+        mTvTitle = findViewById(R.id.tv_title);
+        mIvAdd = findViewById(R.id.iv_add);
+        mTvAdd = findViewById(R.id.tv_add);
+        mTvMore = findViewById(R.id.tv_more);
 
         button = findViewById(R.id.btn_send);
 
