@@ -26,7 +26,7 @@ public class MyApplication extends Application {
         SDKOptions options = new SDKOptions();
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
         StatusBarNotificationConfig config = new StatusBarNotificationConfig();
-        config.notificationEntrance = MainActivity.class; // 点击通知栏跳转到该Activity
+        config.notificationEntrance = MainActivityTest.class; // 点击通知栏跳转到该Activity
         config.notificationSmallIconId = R.drawable.ic_stat_notify_msg;
         // 配置是否需要预下载附件缩略图，默认为 true
         options.preloadAttach = true;

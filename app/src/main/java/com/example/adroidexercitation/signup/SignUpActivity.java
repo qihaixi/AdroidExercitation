@@ -1,4 +1,4 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.signup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,13 +7,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Map;
+import com.example.adroidexercitation.database.DBUtils;
+import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.model.User;
+import com.example.adroidexercitation.login.LoginActivity;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageButton ib_signup_return;
@@ -43,7 +45,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         Toast toast = Toast.makeText(this, null, Toast.LENGTH_SHORT);
         switch (v.getId()){
             case R.id.ib_signup_return:
-                Intent intent = new Intent(SignUpActivity.this,LoginActivity.class);
+                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                 intent.putExtra("null","null");
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

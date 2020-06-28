@@ -1,4 +1,4 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.login;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -19,6 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.adroidexercitation.MainActivity;
+import com.example.adroidexercitation.database.DBUtils;
+import com.example.adroidexercitation.MainActivityTest;
+import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.signup.SignUpActivity;
+import com.example.adroidexercitation.model.User;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -42,17 +48,21 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.login_layout);
         initView();
 
-        //把用户名信息传回到登录页面
+        //把信息传回到登录页面
         Intent intent = getIntent();
         if (intent != null) {
             if (Objects.requireNonNull(intent.getExtras()).containsKey("username_logout")) {
+                // 用户点击注销后，把用户名传递给login界面
                 String usernameValue = intent.getStringExtra("username_logout");
                 username.setText(usernameValue);
-            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("null")){
-
-            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("username")) {
-                String usernameValue=intent.getStringExtra("username");
-                String passwordValue=intent.getStringExtra("password");
+            } else if (Objects.requireNonNull(intent.getExtras()).containsKey("username_signup")) {
+                // 用户注册成功后，把用户名传递给login界面
+                String usernameValue = intent.getStringExtra("username_signup");
+                username.setText(usernameValue);
+            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("username_succ")) {
+                // 自动登录成功后，把用户名和密码传递给login界面，并直接登录
+                String usernameValue=intent.getStringExtra("username_succ");
+                String passwordValue=intent.getStringExtra("password_succ");
                 user = new User();
                 username.setText(usernameValue);
                 password.setText(passwordValue);
@@ -62,8 +72,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 mPsw.setVisibility(View.INVISIBLE);
                 inputAnimator(inputLayout);
                 checkLogin(user);
-            } else if (Objects.requireNonNull(intent.getExtras()).containsKey("username_signup")) {
-                String usernameValue = intent.getStringExtra("username_signup");
+            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("username_fail")){
+                // 自动登录失败后，把用户名传递到login界面
+                String usernameValue=intent.getStringExtra("username_fail");
                 username.setText(usernameValue);
             }
         }
@@ -143,6 +154,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             Intent intent;
             Toast toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
             if (result == 1) {
+                // 这一步是连接网易云信的账号，实现即时通讯功能
                 doLogin();
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("user",user);

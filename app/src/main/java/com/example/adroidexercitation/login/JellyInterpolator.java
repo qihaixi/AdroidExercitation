@@ -1,4 +1,4 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.login;
 
 import android.view.animation.LinearInterpolator;
 

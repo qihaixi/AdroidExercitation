@@ -1,13 +1,14 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.chat;
 
 import java.util.List;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.example.adroidexercitation.R;
 
 public class ChatAdapter extends BaseAdapter {
     private Context context;

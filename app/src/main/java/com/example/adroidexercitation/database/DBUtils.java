@@ -1,16 +1,13 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.database;
 
 import android.os.SystemClock;
-import android.util.Log;
-import android.widget.Toast;
+
+import com.example.adroidexercitation.model.User;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DBUtils {
     // mysql版本5.6

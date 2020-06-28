@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">Adroid Exercitation</string>
+    <string name="app_name">QQ</string>
+    <string name="message">消息</string>
+    <string name="add">添加</string>
+    <string name="more">更多</string>
+    <string name="user_name">用户名</string>
+    <string name="get_more_about_member">了解会员特权</string>
+    <string name="my_wallet">我的钱包</string>
+    <string name="my_favourite">我的收藏</string>
+    <string name="my_photo">我的相册</string>
+    <string name="my_folder">我的文件</string>
+    <string name="setting">设置</string>
+    <string name="night">夜间</string>
 </resources>

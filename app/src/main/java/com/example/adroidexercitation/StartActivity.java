@@ -1,20 +1,15 @@
 package com.example.adroidexercitation;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import com.example.adroidexercitation.database.DBUtils;
+import com.example.adroidexercitation.login.LoginActivity;
+import com.example.adroidexercitation.model.User;
 
 public class StartActivity extends Activity {
     private ImageView pic_bg;
@@ -71,16 +66,17 @@ public class StartActivity extends Activity {
     public void LoginSuccess(){
         //Log.i("tag","成功");
         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-        intent.putExtra("username",user.getUsername());
-        intent.putExtra("password",user.getPassword());
+        intent.putExtra("username_succ",user.getUsername());
+        intent.putExtra("password_succ",user.getPassword());
         startActivity(intent);
         finish();
     }
 
     public void LoginFail() {
         //Log.i("tag","失败");
+        // 自动登录失败时，把上一次登录的用户名传给login页面。
         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-        intent.putExtra("null","null");
+        intent.putExtra("username_fail",user.getUsername());
         startActivity(intent);
         finish();
     }

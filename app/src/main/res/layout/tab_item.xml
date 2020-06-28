@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!--底部导航图标-->
+        <ImageView
+            android:id="@+id/iv_tab_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="10dip"
+            android:paddingTop="10dip"
+            android:paddingRight="10dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher" />
+
+        <!--角标-->
+        <com.example.adroidexercitation.view.DragDeleteTextView
+            android:id="@+id/tv_message_count"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@id/iv_tab_icon"
+            android:layout_alignEnd="@id/iv_tab_icon"
+            android:layout_margin="3dip"
+            android:background="@drawable/shape_message_count"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
+    </RelativeLayout>
+
+    <!--底部导航图标文字-->
+    <TextView
+        android:id="@+id/tv_tab_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:textColor="@color/selector_tab_text"
+        android:textSize="14sp" />
+</LinearLayout>
