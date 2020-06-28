@@ -1,5 +1,7 @@
 package com.example.adroidexercitation.database;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 
 import com.example.adroidexercitation.model.User;
@@ -116,8 +118,48 @@ public class DBUtils {
         }
     }
 
-    // 自动登录
-    public static User AutoLogin(){
+    // 使用sqlite保存用户登录信息，当用户没有注销时，is_log_out设置为0，注销时设置为1
+    public static void LoginLogs(User user,MySQLiteHelper mySQLiteHelper,int is_logout){
+        SQLiteDatabase db;
+        db = mySQLiteHelper.getWritableDatabase();
+        Cursor cursor = db.query("userLogs",null,null,null,null,null,null);
+        if (is_logout == 0) {
+            if (cursor.getCount() == 0) {
+                db.execSQL("insert into userLogs values(0,?,?,0)",new Object[]{user.getUsername(),user.getPassword()});
+            } else {
+                db.execSQL("update userLogs set login_account=?,login_password=?,is_log_out=0 where _id=0",new Object[]{user.getUsername(),user.getPassword()});
+            }
+        } else {
+            db.execSQL("update userLogs set is_log_out=1 where _id=0");
+        }
+
+    }
+
+    // 使用sqlite进行自动登录（数据库在本地，速度较快）
+    public static User AutoLogin(MySQLiteHelper mySQLiteHelper){
+        SystemClock.sleep(1500);
+        SQLiteDatabase db;
+        db = mySQLiteHelper.getWritableDatabase();
+        User user = new User();
+        user.setUsername("");
+        user.setPassword("");
+        Cursor cursor = db.query("userLogs",null,null,null,null,null,null);
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            if (cursor.getInt(cursor.getColumnIndex("is_log_out")) == 1) {
+                user.setUsername(cursor.getString(cursor.getColumnIndex("login_account")));
+            } else {
+                user.setUsername(cursor.getString(cursor.getColumnIndex("login_account")));
+                user.setPassword(cursor.getString(cursor.getColumnIndex("login_password")));
+            }
+        }
+        cursor.close();
+        db.close();
+        return user;
+    }
+
+    // 通过mysql实现自动登录（数据库在服务器，速度较慢）
+    public static User AutoLogin1(){
         SystemClock.sleep(1500);
         Connection conn = getConn();
         PreparedStatement ps;

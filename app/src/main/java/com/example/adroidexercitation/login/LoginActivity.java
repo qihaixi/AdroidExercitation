@@ -8,7 +8,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.adroidexercitation.MainActivity;
 import com.example.adroidexercitation.database.DBUtils;
 import com.example.adroidexercitation.MainActivityTest;
 import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.signup.SignUpActivity;
 import com.example.adroidexercitation.model.User;
 import com.netease.nimlib.sdk.NIMClient;
@@ -39,6 +44,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private View inputLayout;
     private LinearLayout mName, mPsw;
     private User user;
+    private MySQLiteHelper mySQLiteHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,23 +64,29 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 // 用户注册成功后，把用户名传递给login界面
                 String usernameValue = intent.getStringExtra("username_signup");
                 username.setText(usernameValue);
-            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("username_succ")) {
+            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("alusername_succ")) {
                 // 自动登录成功后，把用户名和密码传递给login界面，并直接登录
-                String usernameValue=intent.getStringExtra("username_succ");
-                String passwordValue=intent.getStringExtra("password_succ");
-                user = new User();
+                String usernameValue=intent.getStringExtra("alusername_succ");
+                String passwordValue=intent.getStringExtra("alpassword_succ");
                 username.setText(usernameValue);
                 password.setText(passwordValue);
+                user = new User();
                 user.setUsername(usernameValue);
                 user.setPassword(passwordValue);
                 mName.setVisibility(View.INVISIBLE);
                 mPsw.setVisibility(View.INVISIBLE);
                 inputAnimator(inputLayout);
                 checkLogin(user);
-            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("username_fail")){
+            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("alusername_fail")){
                 // 自动登录失败后，把用户名传递到login界面
-                String usernameValue=intent.getStringExtra("username_fail");
+                String usernameValue=intent.getStringExtra("alusername_fail");
                 username.setText(usernameValue);
+            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("login_us_fail")){
+                // 用户名密码错误或者无法连接到数据库时，把用户名和密码传回到login界面
+                String usernameValue=intent.getStringExtra("login_us_fail");
+                String passwordValue=intent.getStringExtra("login_pa_fail");
+                username.setText(usernameValue);
+                password.setText(passwordValue);
             }
         }
 
@@ -91,6 +103,13 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         tvLogin = findViewById(R.id.main_btn_login);
         tvSignUp = findViewById(R.id.tv_signup);
         tvFindPsw = findViewById(R.id.tv_find_password);
+
+        //实例化数据库帮助类
+        mySQLiteHelper = new MySQLiteHelper(this);
+
+        //实例化user
+        user = new User();
+
         //登录注册按钮监听
         tvLogin.setOnClickListener(this);
         tvSignUp.setOnClickListener(this);
@@ -102,7 +121,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         Toast toast;
         switch (v.getId()){
             case R.id.main_btn_login:
-                user = new User();
                 user.setUsername(username.getText().toString().trim());
                 user.setPassword(password.getText().toString().trim());
                 toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
@@ -117,12 +135,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     mName.setVisibility(View.INVISIBLE);
                     mPsw.setVisibility(View.INVISIBLE);
                     inputAnimator(inputLayout);
-//                    checkLogin(user);
-                    doLogin();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("user",user);
-                    startActivity(intent);
-                    finish();
+                    checkLogin(user);
+//                    doLogin();
+//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                    intent.putExtra("user",user);
+//                    startActivity(intent);
+//                    finish();
                 }
                 break;
             case R.id.tv_signup:
@@ -155,28 +173,36 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             Toast toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
             if (result == 1) {
                 // 这一步是连接网易云信的账号，实现即时通讯功能
+                saveLoginLogs();
                 doLogin();
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("user",user);
                 context.startActivity(intent);
                 finish();
             } else if (result == 0) {
-                toast.setText("密码错误");
+                toast.setText("密码错误，请重试");
                 toast.show();
                 intent=new Intent(LoginActivity.this,LoginActivity.class);
-                intent.putExtra("username",user.getUsername());
+                intent.putExtra("login_us_fail",user.getUsername());
+                intent.putExtra("login_pa_fail",user.getPassword());
                 context.startActivity(intent);
                 finish();
             } else if (result == -1) {
                 toast.setText("用户名不存在");
                 toast.show();
                 intent=new Intent(LoginActivity.this,LoginActivity.class);
-                intent.putExtra("username",user.getUsername());
+                intent.putExtra("login_us_fail",user.getUsername());
+                intent.putExtra("login_pa_fail",user.getPassword());
                 context.startActivity(intent);
                 finish();
             } else if (result == -2) {
                 toast.setText("连接超时，请稍后重试");
                 toast.show();
+                intent=new Intent(LoginActivity.this,LoginActivity.class);
+                intent.putExtra("login_us_fail",user.getUsername());
+                intent.putExtra("login_pa_fail",user.getPassword());
+                context.startActivity(intent);
+                finish();
             }
             Looper.loop();
         }
@@ -276,6 +302,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             }
         };
         NIMClient.getService(AuthService.class).login(info).setCallback(callback);
+    }
+
+    public void saveLoginLogs(){
+        new Thread(){
+            @Override
+            public void run() {
+                DBUtils.LoginLogs(user,mySQLiteHelper,0);
+            }
+        }.start();
     }
 
     @Override
