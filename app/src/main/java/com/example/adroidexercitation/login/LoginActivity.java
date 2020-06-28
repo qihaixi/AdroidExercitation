@@ -304,6 +304,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         NIMClient.getService(AuthService.class).login(info).setCallback(callback);
     }
 
+    // 保存登陆成功用户的登陆信息，以备下次自动登录
     public void saveLoginLogs(){
         new Thread(){
             @Override

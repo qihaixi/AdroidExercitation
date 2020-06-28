@@ -2,43 +2,44 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true">
 
     <ImageButton
         android:id="@+id/maikefeng"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/maikefeng"
-        android:layout_margin="18dp"/>
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_margin="18dp"
+        android:background="@drawable/maikefeng" />
     <ImageButton
         android:id="@+id/tupian"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@drawable/tupian"
         android:layout_margin="18dp"/>
     <ImageButton
         android:id="@+id/xiangji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@drawable/xiangji"
         android:layout_margin="18dp"/>
     <ImageButton
         android:id="@+id/hongbao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@drawable/hongbao"
         android:layout_margin="18dp"/>
     <ImageButton
         android:id="@+id/biaoqing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@drawable/biaoqing"
         android:layout_margin="18dp"/>
 
     <ImageButton
         android:id="@+id/jiahao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@drawable/jiahao"
         android:layout_margin="18dp"/>
 

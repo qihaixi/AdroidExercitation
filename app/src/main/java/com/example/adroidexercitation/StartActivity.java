@@ -29,7 +29,7 @@ public class StartActivity extends Activity {
 
     public void startAnimation() {
         AlphaAnimation anim = new AlphaAnimation(0f, 1f);
-        anim.setDuration(2000);
+        anim.setDuration(1500);
         anim.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
