@@ -86,6 +86,12 @@
             android:layout_height="0dip"
             android:layout_weight="1" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_send"
+            android:text="发送"/>
+
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="match_parent"

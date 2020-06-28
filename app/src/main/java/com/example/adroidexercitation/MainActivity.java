@@ -1,10 +1,13 @@
 package com.example.adroidexercitation;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.adroidexercitation.chat.MessageActivity;
 import com.example.adroidexercitation.fragment.ContactsFragment;
 import com.example.adroidexercitation.fragment.MessageFragment;
 import com.example.adroidexercitation.fragment.StarFragment;
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTvContactsCount;
     private TextView mTvStarCount;
 
+    private Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //初始化视图
@@ -70,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         mIvAdd = (ImageView) findViewById(R.id.iv_add);
         mTvAdd = (TextView) findViewById(R.id.tv_add);
         mTvMore = (TextView) findViewById(R.id.tv_more);
+
+        button = findViewById(R.id.btn_send);
 
         mTvAdd.setVisibility(View.GONE);
         mTvMore.setVisibility(View.GONE);
@@ -195,5 +210,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mTabHost = null;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent home = new Intent(Intent.ACTION_MAIN);
+            home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            home.addCategory(Intent.CATEGORY_HOME);
+            startActivity(home);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

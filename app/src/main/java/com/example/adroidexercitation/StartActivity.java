@@ -21,7 +21,7 @@ public class StartActivity extends Activity {
         setContentView(R.layout.activity_start);
         pic_bg = findViewById(R.id.pic_bg);
         startAnimation();
-        CheckAutoLogin();
+        //CheckAutoLogin();
     }
 
     public void startAnimation() {
@@ -41,7 +41,10 @@ public class StartActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation arg0) {
-
+                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
+                intent.putExtra("username_fail","");
+                startActivity(intent);
+                finish();
             }
         });
         pic_bg.startAnimation(anim);

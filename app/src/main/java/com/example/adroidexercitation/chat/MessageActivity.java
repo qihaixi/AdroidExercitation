@@ -98,7 +98,7 @@ public class MessageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main_message);
+        setContentView(R.layout.activity_message);
         //初始化云信sdk
         NIMClient.getService(MsgServiceObserve.class)
                 .observeReceiveMessage(incomingMessageObserver, true);

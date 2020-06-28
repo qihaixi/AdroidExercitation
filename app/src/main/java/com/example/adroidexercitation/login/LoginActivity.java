@@ -116,12 +116,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     mName.setVisibility(View.INVISIBLE);
                     mPsw.setVisibility(View.INVISIBLE);
                     inputAnimator(inputLayout);
-                    checkLogin(user);
-//                    doLogin();
-//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                    intent.putExtra("user",user);
-//                    startActivity(intent);
-//                    finish();
+//                    checkLogin(user);
+                    doLogin();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("user",user);
+                    startActivity(intent);
+                    finish();
                 }
                 break;
             case R.id.btn_signup:
