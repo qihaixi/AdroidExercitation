@@ -84,19 +84,32 @@
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="0dip"
-            android:layout_weight="1" />
+            android:layout_marginTop="57dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btn_send_user1"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_gravity="start"
+                android:text="admin" />
 
-        <Button
-            android:id="@+id/btn_send_user1"
-            android:layout_width="wrap_content"
-            android:layout_height="42dp"
-            android:text="admin" />
+            <Button
+                android:id="@+id/btn_send_user2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="liuziyang"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_send_user2"
-            android:text="liuziyang"/>
+            <Button
+                android:id="@+id/to_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="打开通讯录"/>
+
+        </FrameLayout>
+
+
 
         <TabWidget
             android:id="@android:id/tabs"

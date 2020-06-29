@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.adroidexercitation.AddressActivity;
 import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.chat.MessageActivity;
 import com.example.adroidexercitation.database.DBUtils;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTvContactsCount;
     private TextView mTvStarCount;
 
-    private Button btn_user1, btn_user2;
+    private Button btn_user1, btn_user2, btn_to_address;
     private TextView tv_setting;
 
     @Override
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         initView();
-        initEvent();
+//        initEvent();
         //接收用户信息
         Intent getData=getIntent();
         user = (User)getData.getSerializableExtra("user");
@@ -88,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, MessageActivity.class);
                 intent.putExtra("ac_user","test" + user.getUser_id());
                 intent.putExtra("ta_user","test2");
+                startActivity(intent);
+            }
+        });
+        btn_to_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddressActivity.class);
+                intent.putExtra("user",user);
                 startActivity(intent);
             }
         });
@@ -115,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         btn_user1 = findViewById(R.id.btn_send_user1);
         btn_user2 = findViewById(R.id.btn_send_user2);
+        btn_to_address = findViewById(R.id.to_address);
         tv_setting = findViewById(R.id.menu_setting);
 
         mTvAdd.setVisibility(View.GONE);
