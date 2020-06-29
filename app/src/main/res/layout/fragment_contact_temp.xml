@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".main.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contact_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#00000000"
-        />
+        android:divider="#00000000" />
 
     <com.example.adroidexercitation.LetterView
         android:id="@+id/letter_view"
         android:layout_width="30dp"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        />
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

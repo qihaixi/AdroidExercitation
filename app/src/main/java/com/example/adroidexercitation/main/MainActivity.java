@@ -7,27 +7,25 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adroidexercitation.AddressActivity;
 import com.example.adroidexercitation.R;
-import com.example.adroidexercitation.chat.MessageActivity;
-import com.example.adroidexercitation.database.DBUtils;
 import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.fragment.ContactsFragment;
 import com.example.adroidexercitation.fragment.MessageFragment;
 import com.example.adroidexercitation.fragment.StarFragment;
-import com.example.adroidexercitation.login.LoginActivity;
 import com.example.adroidexercitation.model.ColorShades;
 import com.example.adroidexercitation.model.User;
 import com.example.adroidexercitation.view.CircleImageView;
@@ -40,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private View mTabView;
     private User user;
     private MySQLiteHelper mySQLiteHelper;
+    private LinearLayoutManager layoutManager;
 
     private String[] mTabTexts;
 
@@ -60,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTvMessgeCount;
     private TextView mTvContactsCount;
     private TextView mTvStarCount;
-
-    private Button btn_user1, btn_user2, btn_to_address;
+//    private Button btn_user1, btn_user2, btn_to_address;
     private TextView tv_setting;
 
     @Override
@@ -70,36 +68,30 @@ public class MainActivity extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         initView();
-//        initEvent();
+        initEvent();
         //接收用户信息
         Intent getData=getIntent();
         user = (User)getData.getSerializableExtra("user");
-        btn_user1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-                intent.putExtra("ac_user","test" + user.getUser_id());
-                intent.putExtra("ta_user","test1");
-                startActivity(intent);
-            }
-        });
-        btn_user2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-                intent.putExtra("ac_user","test" + user.getUser_id());
-                intent.putExtra("ta_user","test2");
-                startActivity(intent);
-            }
-        });
-        btn_to_address.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddressActivity.class);
-                intent.putExtra("user",user);
-                startActivity(intent);
-            }
-        });
+//        contactList.setLayoutManager(layoutManager);
+//        btn_user1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+//                intent.putExtra("ac_user","test" + user.getUser_id());
+//                intent.putExtra("ta_user","test1");
+//                startActivity(intent);
+//            }
+//        });
+//        btn_user2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+//                intent.putExtra("ac_user","test" + user.getUser_id());
+//                intent.putExtra("ta_user","test3");
+//                startActivity(intent);
+//            }
+//        });
+
         tv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,9 +114,12 @@ public class MainActivity extends AppCompatActivity {
         mTvAdd = findViewById(R.id.tv_add);
         mTvMore = findViewById(R.id.tv_more);
 
-        btn_user1 = findViewById(R.id.btn_send_user1);
-        btn_user2 = findViewById(R.id.btn_send_user2);
-        btn_to_address = findViewById(R.id.to_address);
+
+
+
+//        btn_user1 = findViewById(R.id.btn_user1);
+//        btn_user2 = findViewById(R.id.btn_user2);
+//        btn_to_address = findViewById(R.id.to_address);
         tv_setting = findViewById(R.id.menu_setting);
 
         mTvAdd.setVisibility(View.GONE);
@@ -269,5 +264,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    //通讯录点击事件
+    public void onItemClick(View view) {
+        TextView tv_contact_name = view.findViewById(R.id.contact_name);
+        Toast.makeText(this, "点击了" + tv_contact_name.getText().toString(), Toast.LENGTH_SHORT).show();
     }
 }

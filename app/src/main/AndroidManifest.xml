@@ -39,13 +39,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/BaseAppTheme">
-        <activity android:name=".AddressActivity" />
         <activity android:name=".main.ChangePasswordActivity" />
         <activity android:name=".main.SettingActivity" />
         <activity
             android:name=".login.LoginActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".chat.MessageActivity"/>
+        <activity android:name=".chat.MessageActivity" />
         <activity android:name=".main.MainActivityTest" />
         <activity
             android:name=".signup.SignUpActivity"

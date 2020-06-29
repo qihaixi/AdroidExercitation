@@ -1,6 +1,7 @@
 package com.example.adroidexercitation;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,10 +84,11 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else {
             return new ContactHolder(mLayoutInflater.inflate(R.layout.item_contact, parent, false));
         }
+
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof CharacterHolder) {
             ((CharacterHolder) holder).mTextView.setText(resultList.get(position).getmName());
         } else if (holder instanceof ContactHolder) {
@@ -132,7 +134,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             }
         }
-
         return -1; // -1不会滑动
     }
+
 }
