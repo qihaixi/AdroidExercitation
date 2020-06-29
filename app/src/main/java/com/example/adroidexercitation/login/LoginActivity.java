@@ -8,24 +8,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.adroidexercitation.MainActivity;
+import com.example.adroidexercitation.main.MainActivity;
 import com.example.adroidexercitation.database.DBUtils;
-import com.example.adroidexercitation.MainActivityTest;
 import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.signup.SignUpActivity;
@@ -59,7 +53,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             if (Objects.requireNonNull(intent.getExtras()).containsKey("username_logout")) {
                 // 用户点击注销后，把用户名传递给login界面
                 String usernameValue = intent.getStringExtra("username_logout");
+                String passwordValue = intent.getStringExtra("password_logout");
                 username.setText(usernameValue);
+                password.setText(passwordValue);
             } else if (Objects.requireNonNull(intent.getExtras()).containsKey("username_signup")) {
                 // 用户注册成功后，把用户名传递给login界面
                 String usernameValue = intent.getStringExtra("username_signup");
@@ -171,39 +167,31 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             Looper.prepare();
             Intent intent;
             Toast toast = Toast.makeText(LoginActivity.this, null, Toast.LENGTH_SHORT);
-            if (result == 1) {
-                // 这一步是连接网易云信的账号，实现即时通讯功能
+            if (result > 0) {
                 saveLoginLogs();
-                doLogin();
+                // 这一步是连接网易云信的账号，实现即时通讯功能
+                doLogin(result);
+                user.setUser_id(result);
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("user",user);
-                context.startActivity(intent);
-                finish();
-            } else if (result == 0) {
-                toast.setText("密码错误，请重试");
-                toast.show();
-                intent=new Intent(LoginActivity.this,LoginActivity.class);
+            } else{
+                if (result == 0) {
+                    toast.setText("密码错误，请重试");
+                    toast.show();
+                } else if (result == -1) {
+                    toast.setText("用户名不存在");
+                    toast.show();
+                    finish();
+                } else if (result == -2) {
+                    toast.setText("连接超时，请稍后重试");
+                    toast.show();
+                }
+                intent=new Intent(LoginActivity.this, LoginActivity.class);
                 intent.putExtra("login_us_fail",user.getUsername());
                 intent.putExtra("login_pa_fail",user.getPassword());
-                context.startActivity(intent);
-                finish();
-            } else if (result == -1) {
-                toast.setText("用户名不存在");
-                toast.show();
-                intent=new Intent(LoginActivity.this,LoginActivity.class);
-                intent.putExtra("login_us_fail",user.getUsername());
-                intent.putExtra("login_pa_fail",user.getPassword());
-                context.startActivity(intent);
-                finish();
-            } else if (result == -2) {
-                toast.setText("连接超时，请稍后重试");
-                toast.show();
-                intent=new Intent(LoginActivity.this,LoginActivity.class);
-                intent.putExtra("login_us_fail",user.getUsername());
-                intent.putExtra("login_pa_fail",user.getPassword());
-                context.startActivity(intent);
-                finish();
             }
+            context.startActivity(intent);
+            finish();
             Looper.loop();
         }
     }
@@ -219,7 +207,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     // 输入框的动画效果
     private void inputAnimator(final View view) {
-
         ValueAnimator animator = ValueAnimator.ofFloat(0, 350);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
@@ -263,27 +250,25 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             }
         });
     }
-
-    /**
-     * 出现进度动画
-
-     *
-     * @param view
-                */
-        private void progressAnimator(final View view) {
-            PropertyValuesHolder animator = PropertyValuesHolder.ofFloat("scaleX",
-                    0.5f, 1f);
-            PropertyValuesHolder animator2 = PropertyValuesHolder.ofFloat("scaleY",
-                    0.5f, 1f);
-            ObjectAnimator animator3 = ObjectAnimator.ofPropertyValuesHolder(view,
-                    animator, animator2);
-            animator3.setDuration(1000);
-            animator3.setInterpolator(new JellyInterpolator());
-            animator3.start();
+    //出现进度动画
+    private void progressAnimator(final View view) {
+        PropertyValuesHolder animator = PropertyValuesHolder.ofFloat("scaleX",
+                0.5f, 1f);
+        PropertyValuesHolder animator2 = PropertyValuesHolder.ofFloat("scaleY",
+                0.5f, 1f);
+        ObjectAnimator animator3 = ObjectAnimator.ofPropertyValuesHolder(view,
+                animator, animator2);
+        animator3.setDuration(1000);
+        animator3.setInterpolator(new JellyInterpolator());
+        animator3.start();
     }
 
-    public void doLogin(){
-        LoginInfo info = new LoginInfo("429784048","123456");
+    public void doLogin(int result){
+        String username;
+        String password;
+        username = "test" + result;
+        password = "123456";
+        LoginInfo info = new LoginInfo(username,password);
         RequestCallback<LoginInfo> callback = new RequestCallback<LoginInfo>() {
             @Override
             public void onSuccess(LoginInfo param) {

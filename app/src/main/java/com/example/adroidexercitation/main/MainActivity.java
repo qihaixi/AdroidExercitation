@@ -1,4 +1,4 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.main;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,12 +19,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.chat.MessageActivity;
+import com.example.adroidexercitation.database.DBUtils;
+import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.fragment.ContactsFragment;
 import com.example.adroidexercitation.fragment.MessageFragment;
 import com.example.adroidexercitation.fragment.StarFragment;
+import com.example.adroidexercitation.login.LoginActivity;
+import com.example.adroidexercitation.model.ColorShades;
+import com.example.adroidexercitation.model.User;
 import com.example.adroidexercitation.view.CircleImageView;
-import com.example.adroidexercitation.view.DragDeleteTextView;
 import com.example.adroidexercitation.view.FragmentTabHost;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private FragmentTabHost mTabHost;
     private View mTabView;
+    private User user;
+    private MySQLiteHelper mySQLiteHelper;
 
     private String[] mTabTexts;
 
@@ -54,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTvContactsCount;
     private TextView mTvStarCount;
 
-    private Button button;
+    private Button btn_user1, btn_user2;
+    private TextView tv_setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +70,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
-        button.setOnClickListener(new View.OnClickListener() {
+        //接收用户信息
+        Intent getData=getIntent();
+        user = (User)getData.getSerializableExtra("user");
+        btn_user1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                intent.putExtra("ac_user","test" + user.getUser_id());
+                intent.putExtra("ta_user","test1");
+                startActivity(intent);
+            }
+        });
+        btn_user2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                intent.putExtra("ac_user","test" + user.getUser_id());
+                intent.putExtra("ta_user","test2");
+                startActivity(intent);
+            }
+        });
+        tv_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,SettingActivity.class);
+                intent.putExtra("user",user);
                 startActivity(intent);
             }
         });
@@ -84,10 +113,18 @@ public class MainActivity extends AppCompatActivity {
         mTvAdd = findViewById(R.id.tv_add);
         mTvMore = findViewById(R.id.tv_more);
 
-        button = findViewById(R.id.btn_send);
+        btn_user1 = findViewById(R.id.btn_send_user1);
+        btn_user2 = findViewById(R.id.btn_send_user2);
+        tv_setting = findViewById(R.id.menu_setting);
 
         mTvAdd.setVisibility(View.GONE);
         mTvMore.setVisibility(View.GONE);
+
+        //实例化数据库帮助类
+        mySQLiteHelper = new MySQLiteHelper(this);
+        //接收user信息
+        Intent getData=getIntent();
+        user = (User)getData.getSerializableExtra("user");
 
         //底部导航设置
         mTabHost = findViewById(android.R.id.tabhost);

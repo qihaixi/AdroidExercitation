@@ -1,4 +1,4 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.start;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.database.DBUtils;
 import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.login.LoginActivity;
@@ -44,10 +45,6 @@ public class StartActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation arg0) {
-//                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-//                intent.putExtra("username_fail","");
-//                startActivity(intent);
-//                finish();
             }
         });
         pic_bg.startAnimation(anim);

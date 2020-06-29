@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.adroidexercitation" >
+    package="com.example.adroidexercitation">
     <!-- 权限声明 -->
     <!-- 访问网络状态 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -38,15 +38,20 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/BaseAppTheme" >
-        <activity android:name=".login.LoginActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".chat.MessageActivity" />
-        <activity android:name=".MainActivityTest" />
-        <activity android:name=".signup.SignUpActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".StartActivity"
+        android:theme="@style/BaseAppTheme">
+        <activity android:name=".main.ChangePasswordActivity" />
+        <activity android:name=".main.SettingActivity" />
+        <activity
+            android:name=".login.LoginActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".chat.MessageActivity"/>
+        <activity android:name=".main.MainActivityTest" />
+        <activity
+            android:name=".signup.SignUpActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".main.MainActivity" />
+        <activity
+            android:name=".start.StartActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,7 +69,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
         <!--
         APP key, 可以在这里设置，也可以在 SDKOptions 中提供。
             如果 SDKOptions 中提供了，取 SDKOptions 中的值。
@@ -86,7 +90,7 @@
         <receiver
             android:name="com.netease.nimlib.service.NimReceiver"
             android:exported="false"
-            android:process=":core" >
+            android:process=":core">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

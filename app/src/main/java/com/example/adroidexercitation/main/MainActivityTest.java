@@ -1,4 +1,4 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.main;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.chat.MessageActivity;
 import com.example.adroidexercitation.login.LoginActivity;
 import com.example.adroidexercitation.model.User;
@@ -52,7 +53,6 @@ public class MainActivityTest extends Activity {
         tv1=findViewById(R.id.info_username);
         tv2=findViewById(R.id.info_password);
         btn_back = findViewById(R.id.ib_login_return);
-        btn_send = findViewById(R.id.btn_send);
     }
 
     // 双击返回键直接退回桌面

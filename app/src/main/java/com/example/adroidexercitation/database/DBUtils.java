@@ -36,7 +36,7 @@ public class DBUtils {
         PreparedStatement ps;
         try {
             SystemClock.sleep(1500);
-            String sql = "select password from userlogin where username = ? or mail = ?";
+            String sql = "select * from userlogin where username = ? or mail = ?";
             ps = conn.prepareStatement(sql);
             // 统一由username接收
             ps.setString(1,user.getUsername());
@@ -49,9 +49,10 @@ public class DBUtils {
                     conn.close();
                     return 0;
                 } else {
+                    int result = rs.getInt("user_id");
                     ps.close();
                     conn.close();
-                    return 1;
+                    return result;
                     }
             }else{
                 ps.close();
@@ -69,33 +70,40 @@ public class DBUtils {
         Connection conn = getConn();
         PreparedStatement ps;
         try {
-            String sql= "select * from userlogin where username = ?";
+            //查询用户个数
+            String sql = "select * from userlogin";
+            ps = conn.prepareStatement(sql);
+            ps.execute();
+            ResultSet rs = ps.getResultSet();
+            rs.last();
+            int row = rs.getRow() + 1;
+            //查询用户名是否重复
+            sql= "select * from userlogin where username = ?";
             ps = conn.prepareStatement(sql);
             ps.setString(1,user.getUsername());
             ps.execute();
-            ResultSet rs = ps.getResultSet();
-            if (!rs.next()) {
+            ResultSet rs1 = ps.getResultSet();
+            if (!rs1.next()) {
                 sql= "select * from userlogin where mail = ?";
                 ps = conn.prepareStatement(sql);
                 ps.setString(1,user.getMail());
                 ps.execute();
                 ResultSet rs2 = ps.getResultSet();
                 if (!rs2.next()) {
-                    sql= "insert into userlogin values(?,?,?,?)";
+                    sql= "insert into userlogin values(?,?,?,?,?)";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1,user.getUsername());
                     ps.setString(2,user.getMail());
                     ps.setString(3,user.getSex());
                     ps.setString(4,user.getPassword());
+                    ps.setInt(5,row);
                     int res = ps.executeUpdate();
+                    ps.close();
+                    conn.close();
                     if (res == 0) {
                         // 插入错误
-                        ps.close();
-                        conn.close();
                         return -3;
                     }else {
-                        ps.close();
-                        conn.close();
                         // 成功注册
                         return 1;
                     }

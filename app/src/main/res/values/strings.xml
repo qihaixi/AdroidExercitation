@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">QQ</string>
     <string name="message">消息</string>
@@ -11,4 +12,20 @@
     <string name="my_folder">我的文件</string>
     <string name="setting">设置</string>
     <string name="night">夜间</string>
+    <string name="account">账号管理</string>
+    <string name="phone">手机号码</string>
+    <string name="security">账号安全</string>
+    <string name="notice">消息通知</string>
+    <string name="privacy">隐私</string>
+    <string name="general">通用</string>
+    <string name="auxiliary">辅助系统</string>
+    <string name="change_pwd">修改密码</string>
+    <string name="old_pwd">原密码:</string>
+    <string name="new_pwd">新密码:</string>
+    <string name="confirm_pwd">重新确认密码:</string>
+    <string name="confirm">确定</string>
+    <string name="logout">注销</string>
+    <string name="confirm_pwd_text">8–16位，与新密码一致</string>
+    <string name="new_pwd_text">8–16位，至少含数字和字母两种组合</string>
+    <string name="old_pwd_text">若包含字母，请注意区分大小写</string>
 </resources>

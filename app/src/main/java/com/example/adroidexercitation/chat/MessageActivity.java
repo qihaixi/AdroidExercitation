@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,8 +22,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
-import com.example.adroidexercitation.MainActivity;
+import com.example.adroidexercitation.main.MainActivity;
 import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.model.User;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class MessageActivity extends Activity {
     //返回
@@ -50,6 +51,10 @@ public class MessageActivity extends Activity {
     private ImageButton imgIcon;//显示拍照照片，暂时没用
     private Uri imageUri;   //  通用资源标志符
     public static final int TAKE_PHOTO =1;  //  TAKE_PHOTO来作为case处理图片的标识
+
+    //定义当前用户和对方用户
+    private String ac_user;
+    private String ta_user;
 
     private ChatAdapter chatAdapter;
     private ListView lv_chat_dialog;
@@ -81,7 +86,8 @@ public class MessageActivity extends Activity {
                 @Override
                 public void onEvent(List<IMMessage> messages) {
                     // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
-                    for(IMMessage message : messages){
+                    if(!ta_user.equals(ac_user)) {
+                        for(IMMessage message : messages){
                         //tv_receive.setText(message.getContent());
                         PersonChat personChat = new PersonChat();
                         personChat.setMeSend(false);
@@ -89,7 +95,7 @@ public class MessageActivity extends Activity {
                         personChats.add(personChat);
                         chatAdapter.notifyDataSetChanged();
                         lv_chat_dialog.setSelection(personChats.size()-1);
-                    }
+                    }}
                 }
             };
 
@@ -99,6 +105,12 @@ public class MessageActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_message);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            ac_user = intent.getStringExtra("ac_user");
+            ta_user = intent.getStringExtra("ta_user");
+        }
         //初始化云信sdk
         NIMClient.getService(MsgServiceObserve.class)
                 .observeReceiveMessage(incomingMessageObserver, true);
@@ -140,8 +152,11 @@ public class MessageActivity extends Activity {
             @Override
             public void onClick(View view) {
                 //设置显式Intent实现从MessageActivity到MainActivity的跳转
-                Intent intent =  new Intent(MessageActivity.this,MainActivity.class);
-                startActivity(intent);//调用startActivity（）方法，启动SecondActivity
+//                Intent intent =  new Intent(MessageActivity.this,MainActivity.class);
+//                startActivity(intent);//调用startActivity（）方法，启动SecondActivity
+//                finish();
+                //无需跳转，直接结束当前页面
+                MessageActivity.this.finish();
             }
         });
 
@@ -197,7 +212,8 @@ public class MessageActivity extends Activity {
 
     //第三方云信即时通信
     public void sendText(String text){
-        String account = "429784048";
+        //判断当前用户，判断当前用户点击对象的用户
+        String account = ta_user;
         SessionTypeEnum sessionType = SessionTypeEnum.P2P;
         IMMessage textMessage = MessageBuilder.createTextMessage(account, sessionType, text);
         NIMClient.getService(MsgService.class).sendMessage(textMessage, false).setCallback(new RequestCallback<Void>() {

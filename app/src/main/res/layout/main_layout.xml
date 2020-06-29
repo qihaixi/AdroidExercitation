@@ -32,12 +32,7 @@
         android:layout_alignLeft="@+id/info_username"
         android:layout_alignStart="@+id/info_username" />
 
-    <Button
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/btn_send"
-        android:layout_below="@+id/info_password"
-        android:text="发送"/>
+
 
 
 </RelativeLayout>

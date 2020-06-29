@@ -3,6 +3,7 @@ package com.example.adroidexercitation;
 import android.app.Application;
 import android.graphics.Bitmap;
 
+import com.example.adroidexercitation.main.MainActivityTest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
