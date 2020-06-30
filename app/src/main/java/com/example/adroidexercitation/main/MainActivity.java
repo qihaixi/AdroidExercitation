@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.database.MySQLiteHelper;
@@ -69,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
-        //接收用户信息
-        Intent getData=getIntent();
-        user = (User)getData.getSerializableExtra("user");
 //        contactList.setLayoutManager(layoutManager);
 //        btn_user1.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -158,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             //给Fragment传值
             Bundle bundle = new Bundle();
             bundle.putString(TAG, mTabTexts[i]);
+            bundle.putString("username",user.getUsername());
 
             //设置角标（未读消息）数
             switch (i) {

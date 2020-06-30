@@ -1,19 +1,16 @@
-package com.example.adroidexercitation;
+package com.example.adroidexercitation.address;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adroidexercitation.Contact;
-import com.example.adroidexercitation.ContactComparator;
 import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.address.Contact;
+import com.example.adroidexercitation.address.ContactComparator;
 import com.example.adroidexercitation.utils.Utils;
 
 import java.util.ArrayList;

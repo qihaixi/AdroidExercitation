@@ -132,7 +132,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     mPsw.setVisibility(View.INVISIBLE);
                     inputAnimator(inputLayout);
                     checkLogin(user);
-//                    doLogin();
+//                    doLogin(1);
 //                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 //                    intent.putExtra("user",user);
 //                    startActivity(intent);

@@ -3,6 +3,7 @@ package com.example.adroidexercitation.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.example.adroidexercitation.model.User;
 
@@ -10,13 +11,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class DBUtils {
     // mysql版本5.6
     private static String driver = "com.mysql.jdbc.Driver";//MySQL 驱动
     // ip地址:mysql端口号，ip地址为电脑ip地址，手机和电脑需连同一个无线网
     private static String url = "jdbc:mysql://172.20.10.3:3326/test?useUnicode=true&characterEncoding=utf8";//MYSQL数据库连接Url
-    //private static String url = "jdbc:mysql://172.20.69.229:3326/test";
+    //private static String url = "jdbc:mysql://172.20.10.3:3326/test";
     private static String user = "root";//用户名
     private static String password = "123456";//密码
 
@@ -130,6 +132,8 @@ public class DBUtils {
     public static void LoginLogs(User user,MySQLiteHelper mySQLiteHelper,int is_logout){
         SQLiteDatabase db;
         db = mySQLiteHelper.getWritableDatabase();
+        // 创建通讯录表
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + user.getUsername() + "(addr_list varchar(20) primary key)");
         Cursor cursor = db.query("userLogs",null,null,null,null,null,null);
         if (is_logout == 0) {
             if (cursor.getCount() == 0) {
@@ -197,4 +201,21 @@ public class DBUtils {
         }
     }
 
+    // 查找通讯录
+    public static ArrayList<String> search_for_address(String username, MySQLiteHelper mySQLiteHelper) {
+        SQLiteDatabase db;
+        ArrayList<String> list = new ArrayList<>();
+        db = mySQLiteHelper.getWritableDatabase();
+        Cursor cursor = db.query(username,null,null,null,null,null,null);
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            list.add(cursor.getString(1));
+            while (cursor.moveToNext()) {
+                list.add(cursor.getString(1));
+            }
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
 }
