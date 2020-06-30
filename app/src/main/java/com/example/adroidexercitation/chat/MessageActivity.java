@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -55,6 +56,10 @@ public class MessageActivity extends Activity {
     //定义当前用户和对方用户
     private String ac_user;
     private String ta_user;
+    private String ta_username;
+    private User user;
+
+    private TextView title_text;
 
     private ChatAdapter chatAdapter;
     private ListView lv_chat_dialog;
@@ -110,18 +115,23 @@ public class MessageActivity extends Activity {
         if (intent != null) {
             ac_user = intent.getStringExtra("ac_user");
             ta_user = intent.getStringExtra("ta_user");
+//            user = (User)intent.getSerializableExtra("user");
+            ta_username = intent.getStringExtra("ta_username");
         }
         //初始化云信sdk
         NIMClient.getService(MsgServiceObserve.class)
                 .observeReceiveMessage(incomingMessageObserver, true);
 
         lv_chat_dialog = findViewById(R.id.lv_chat_dialog);
+        title_text = findViewById(R.id.title_text);
         Button btn_chat_message_send = findViewById(R.id.btn_chat_message_send);
         final EditText et_chat_message = findViewById(R.id.et_chat_message);
 
         chatAdapter = new ChatAdapter(this,personChats);
         lv_chat_dialog.setAdapter(chatAdapter);
 
+        //设置聊天标题
+        title_text.setText(ta_username);
         //发送消息按钮实现
         btn_chat_message_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +163,8 @@ public class MessageActivity extends Activity {
             public void onClick(View view) {
                 //设置显式Intent实现从MessageActivity到MainActivity的跳转
 //                Intent intent =  new Intent(MessageActivity.this,MainActivity.class);
-//                startActivity(intent);//调用startActivity（）方法，启动SecondActivity
+//                intent.putExtra("user","user");
+//                startActivity(intent);
 //                finish();
                 //无需跳转，直接结束当前页面
                 MessageActivity.this.finish();

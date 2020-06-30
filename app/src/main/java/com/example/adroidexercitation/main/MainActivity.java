@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.chat.MessageActivity;
 import com.example.adroidexercitation.database.DBUtils;
 import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.fragment.ContactsFragment;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private MySQLiteHelper mySQLiteHelper;
     private LinearLayoutManager layoutManager;
     private ArrayList<String> list;
+    private int id;
 
     private String[] mTabTexts;
 
@@ -64,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTvMessgeCount;
     private TextView mTvContactsCount;
     private TextView mTvStarCount;
-//    private Button btn_user1, btn_user2, btn_to_address;
     private TextView tv_setting;
+    private TextView tv_username;
+    private TextView tv_contact_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,25 +78,6 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initEvent();
         find_user();
-//        contactList.setLayoutManager(layoutManager);
-//        btn_user1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-//                intent.putExtra("ac_user","test" + user.getUser_id());
-//                intent.putExtra("ta_user","test1");
-//                startActivity(intent);
-//            }
-//        });
-//        btn_user2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-//                intent.putExtra("ac_user","test" + user.getUser_id());
-//                intent.putExtra("ta_user","test3");
-//                startActivity(intent);
-//            }
-//        });
         mTvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,21 +136,23 @@ public class MainActivity extends AppCompatActivity {
         mTvAdd = findViewById(R.id.tv_add);
         mTvMore = findViewById(R.id.tv_more);
 
+        //实例化数据库帮助类
+        mySQLiteHelper = new MySQLiteHelper(this);
+        //接收user信息
+        Intent getData=getIntent();
+        user = (User)getData.getSerializableExtra("user");
+
         list = new ArrayList<>();
 
 //        btn_user1 = findViewById(R.id.btn_user1);
 //        btn_user2 = findViewById(R.id.btn_user2);
 //        btn_to_address = findViewById(R.id.to_address);
         tv_setting = findViewById(R.id.menu_setting);
+        tv_username = findViewById(R.id.tv_username);
+        tv_username.setText(user.getUsername());
 
         mTvAdd.setVisibility(View.GONE);
         mTvMore.setVisibility(View.GONE);
-
-        //实例化数据库帮助类
-        mySQLiteHelper = new MySQLiteHelper(this);
-        //接收user信息
-        Intent getData=getIntent();
-        user = (User)getData.getSerializableExtra("user");
 
         //底部导航设置
         mTabHost = findViewById(android.R.id.tabhost);
@@ -306,8 +292,25 @@ public class MainActivity extends AppCompatActivity {
 
     //通讯录点击事件
     public void onItemClick(View view) {
-        TextView tv_contact_name = view.findViewById(R.id.contact_name);
-        Toast.makeText(this, "点击了" + tv_contact_name.getText().toString(), Toast.LENGTH_SHORT).show();
+        tv_contact_name = view.findViewById(R.id.contact_name);
+        //获取点击的用户名-->tv_contact_name.getText().toString()
+        //数据库中搜索她的user_id-->select_user_id()
+        select_user_id(tv_contact_name.getText().toString());
+    }
+
+    //搜索用户id,并跳转聊天页面
+    private void select_user_id(final String click_username){
+        new Thread(){
+            @Override
+            public void run() {
+                id = DBUtils.select_userid(click_username);
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                intent.putExtra("ac_user","test" + user.getUser_id());
+                intent.putExtra("ta_user","test" + id);
+                intent.putExtra("ta_username",tv_contact_name.getText().toString());
+                startActivity(intent);
+            }
+        }.start();
     }
 
     //查询所有用户

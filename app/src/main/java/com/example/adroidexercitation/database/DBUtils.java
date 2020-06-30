@@ -19,7 +19,7 @@ public class DBUtils {
     private static String driver = "com.mysql.jdbc.Driver";//MySQL 驱动
     // ip地址:mysql端口号，ip地址为电脑ip地址，手机和电脑需连同一个无线网
     private static String url = "jdbc:mysql://172.20.10.3:3326/test?useUnicode=true&characterEncoding=utf8";//MYSQL数据库连接Url
-    //private static String url = "jdbc:mysql://172.20.10.3:3326/test";
+//    private static String url = "jdbc:mysql://10.106.5.23:3326/test?useUnicode=true&characterEncoding=utf8";
     private static String user = "root";//用户名
     private static String password = "123456";//密码
 
@@ -252,5 +252,26 @@ public class DBUtils {
         db.insert(""+ac_username,null,values);
 //        db.delete(""+ac_username,"addr_list=?",new String[]{""+ta_username});
         db.close();
+    }
+
+    //搜索用户id
+    public static int select_userid(String username){
+        Connection conn = getConn();
+        PreparedStatement ps;
+        try {
+            String sql = "select user_id from userlogin where username=?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.execute();
+            ResultSet rs = ps.getResultSet();
+            rs.next();
+            int result = rs.getInt("user_id");
+            ps.close();
+            conn.close();
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
     }
 }
