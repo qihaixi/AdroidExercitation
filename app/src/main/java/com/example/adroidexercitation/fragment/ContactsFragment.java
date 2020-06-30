@@ -39,6 +39,7 @@ public class ContactsFragment extends Fragment {
         mUsername = arguments.getString("username");
 //        mTagtext = arguments.getString(MainActivity.TAG);
         mySQLiteHelper = new MySQLiteHelper(getActivity());
+        search_for_address();
     }
 
     @Nullable
@@ -47,7 +48,6 @@ public class ContactsFragment extends Fragment {
         Log.i(TAG, "onCreateView: ");
 
         View inflate = inflater.inflate(R.layout.fragment_contact_temp, null);
-        search_for_address();
         String[] contact = new String[list.size()];
         list.toArray(contact);
 //        String[] contactNames = new String[] {"啊","白菜","计洪", "韦远洪", "刘康富", "严锐", "李海东", "刘子扬", "杨汉华", "123", "456", "789", "陈晓燕", "$6", "左林", "陈圆圆", "老郭", "郭襄", "穆念慈", "东方不败", "梅超风", "林平之", "林远图", "灭绝师太", "段誉", "鸠摩智"};

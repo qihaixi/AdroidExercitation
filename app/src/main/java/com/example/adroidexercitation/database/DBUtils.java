@@ -1,5 +1,6 @@
 package com.example.adroidexercitation.database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
@@ -38,11 +39,9 @@ public class DBUtils {
         PreparedStatement ps;
         try {
             SystemClock.sleep(1500);
-            String sql = "select * from userlogin where username = ? or mail = ?";
+            String sql = "select * from userlogin where username = ?";
             ps = conn.prepareStatement(sql);
-            // 统一由username接收
             ps.setString(1,user.getUsername());
-            ps.setString(2,user.getUsername());
             ps.execute();
             ResultSet rs = ps.getResultSet();
             if (rs.next()) {
@@ -72,7 +71,8 @@ public class DBUtils {
         Connection conn = getConn();
         PreparedStatement ps;
         try {
-            //查询用户个数
+            //查询用户个数（每添加一个用户便把user_id+1，对应网易云信创建的账号）
+            //如第二个创建的用户为user2，其user_id为2，在登陆调用dologin时传入参数2，网易云信登陆为test2.
             String sql = "select * from userlogin";
             ps = conn.prepareStatement(sql);
             ps.execute();
@@ -209,13 +209,48 @@ public class DBUtils {
         Cursor cursor = db.query(username,null,null,null,null,null,null);
         if (cursor.getCount() != 0) {
             cursor.moveToFirst();
-            list.add(cursor.getString(1));
+            list.add(cursor.getString(0));
             while (cursor.moveToNext()) {
-                list.add(cursor.getString(1));
+                list.add(cursor.getString(0));
             }
         }
         cursor.close();
         db.close();
         return list;
+    }
+
+    //查询所有用户
+    public static ArrayList<String> find_user(String username){
+        Connection conn = getConn();
+        PreparedStatement ps;
+        ArrayList<String> list = new ArrayList<>();
+        try{
+            String sql = "select username from userlogin where username<>'" + username + "'";
+            ps = conn.prepareStatement(sql);
+            ps.execute();
+            ResultSet rs = ps.getResultSet();
+            while (rs.next()) {
+                list.add(rs.getString("username"));
+            }
+            ps.close();
+            conn.close();
+            return list;
+        } catch (Exception e){
+            e.printStackTrace();
+            return list;
+        }
+
+    }
+
+    //添加用户到通讯录
+    public static void add_user(String ac_username, String ta_username, MySQLiteHelper mySQLiteHelper){
+        SQLiteDatabase db;
+        ContentValues values;
+        db = mySQLiteHelper.getWritableDatabase();
+        values = new ContentValues();
+        values.put("addr_list",ta_username);
+        db.insert(""+ac_username,null,values);
+//        db.delete(""+ac_username,"addr_list=?",new String[]{""+ta_username});
+        db.close();
     }
 }

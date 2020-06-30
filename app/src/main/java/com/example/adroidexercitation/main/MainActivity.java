@@ -1,5 +1,7 @@
 package com.example.adroidexercitation.main;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.adroidexercitation.R;
+import com.example.adroidexercitation.database.DBUtils;
 import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.fragment.ContactsFragment;
 import com.example.adroidexercitation.fragment.MessageFragment;
@@ -30,6 +33,8 @@ import com.example.adroidexercitation.model.User;
 import com.example.adroidexercitation.view.CircleImageView;
 import com.example.adroidexercitation.view.FragmentTabHost;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     private DrawerLayout mDrawer;
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private User user;
     private MySQLiteHelper mySQLiteHelper;
     private LinearLayoutManager layoutManager;
+    private ArrayList<String> list;
 
     private String[] mTabTexts;
 
@@ -68,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
+        find_user();
 //        contactList.setLayoutManager(layoutManager);
 //        btn_user1.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -87,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
+        mTvAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //点击框，添加通讯录
+                showDialog();
+            }
+        });
 
         tv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +110,34 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void showDialog(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        final String[] arr = new String[list.size()];
+        list.toArray(arr);
+        builder.setTitle("请选择");
+        builder.setItems(arr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                add_user_to_addr(arr[which]);
+                Toast.makeText(MainActivity.this, "添加成功"+arr[which], Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                intent.putExtra("user",user);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                finish();
+            }
+        });
+        builder.setPositiveButton("关闭",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
     //初始化视图
@@ -110,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
         mTvAdd = findViewById(R.id.tv_add);
         mTvMore = findViewById(R.id.tv_more);
 
-
-
+        list = new ArrayList<>();
 
 //        btn_user1 = findViewById(R.id.btn_user1);
 //        btn_user2 = findViewById(R.id.btn_user2);
@@ -267,5 +308,25 @@ public class MainActivity extends AppCompatActivity {
     public void onItemClick(View view) {
         TextView tv_contact_name = view.findViewById(R.id.contact_name);
         Toast.makeText(this, "点击了" + tv_contact_name.getText().toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    //查询所有用户
+    private void find_user(){
+        new Thread(){
+            @Override
+            public void run() {
+                list = DBUtils.find_user(user.getUsername());
+            }
+        }.start();
+    }
+
+    //添加用户到通讯录
+    private void add_user_to_addr(final String ta_username){
+        new Thread(){
+            @Override
+            public void run() {
+                DBUtils.add_user(user.getUsername(),ta_username,mySQLiteHelper);
+            }
+        }.start();
     }
 }
