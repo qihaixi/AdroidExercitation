@@ -1,6 +1,7 @@
 package com.example.adroidexercitation.main;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,17 +25,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.chat.MessageActivity;
+import com.example.adroidexercitation.chat.PersonChat;
 import com.example.adroidexercitation.database.DBUtils;
 import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.fragment.ContactsFragment;
+import com.example.adroidexercitation.fragment.Data;
+import com.example.adroidexercitation.fragment.DataAdapter;
 import com.example.adroidexercitation.fragment.MessageFragment;
 import com.example.adroidexercitation.fragment.StarFragment;
 import com.example.adroidexercitation.model.ColorShades;
 import com.example.adroidexercitation.model.User;
 import com.example.adroidexercitation.view.CircleImageView;
 import com.example.adroidexercitation.view.FragmentTabHost;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
@@ -46,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private ArrayList<String> list;
     private int id;
+    private ArrayList<String> receive;
 
     private String[] mTabTexts;
 
@@ -78,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initEvent();
         find_user();
+
+
         mTvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void showDialog(){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
@@ -144,9 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
         list = new ArrayList<>();
 
-//        btn_user1 = findViewById(R.id.btn_user1);
-//        btn_user2 = findViewById(R.id.btn_user2);
-//        btn_to_address = findViewById(R.id.to_address);
         tv_setting = findViewById(R.id.menu_setting);
         tv_username = findViewById(R.id.tv_username);
         tv_username.setText(user.getUsername());
@@ -182,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString(TAG, mTabTexts[i]);
             bundle.putString("username",user.getUsername());
+            bundle.putInt("userid",user.getUser_id());
+
 
             //设置角标（未读消息）数
             switch (i) {
@@ -275,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+//        NIMClient.getService(MsgServiceObserve.class)
+//                .observeReceiveMessage(incomingMessageObserver, false);
         mTabHost = null;
     }
 
@@ -332,4 +347,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
     }
+
 }

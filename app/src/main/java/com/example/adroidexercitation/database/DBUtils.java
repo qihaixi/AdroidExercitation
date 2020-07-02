@@ -144,6 +144,8 @@ public class DBUtils {
         } else {
             db.execSQL("update userLogs set is_log_out=1 where _id=0");
         }
+        cursor.close();
+        db.close();
 
     }
 
@@ -272,6 +274,29 @@ public class DBUtils {
         }catch (Exception e){
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    //通过id查找用户名
+    public static String find_username(int user_id){
+        Connection conn = getConn();
+        PreparedStatement ps;
+        try {
+            Log.i("sql", ""+user_id);
+            String sql = "select username from userlogin where user_id=?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, user_id);
+            ps.execute();
+            ResultSet rs = ps.getResultSet();
+            rs.next();
+            String result = rs.getString("username");
+            Log.i("sql",result);
+            ps.close();
+            conn.close();
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+            return "未知用户";
         }
     }
 }

@@ -57,7 +57,7 @@ public class MessageActivity extends Activity {
     private String ac_user;
     private String ta_user;
     private String ta_username;
-    private User user;
+    private ArrayList<String> msg_receiver;
 
     private TextView title_text;
 
@@ -110,14 +110,25 @@ public class MessageActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_message);
-
         Intent intent = getIntent();
         if (intent != null) {
             ac_user = intent.getStringExtra("ac_user");
             ta_user = intent.getStringExtra("ta_user");
 //            user = (User)intent.getSerializableExtra("user");
             ta_username = intent.getStringExtra("ta_username");
+            msg_receiver = intent.getStringArrayListExtra("chat");
         }
+        //显示对方发来的消息
+        if (msg_receiver != null) {
+            for (int i=0; i<msg_receiver.size(); i++) {
+                PersonChat personChat = new PersonChat();
+                personChat.setMeSend(false);
+                personChat.setChatMessage(msg_receiver.get(i));
+                personChats.add(personChat);
+            }
+        }
+
+
         //初始化云信sdk
         NIMClient.getService(MsgServiceObserve.class)
                 .observeReceiveMessage(incomingMessageObserver, true);

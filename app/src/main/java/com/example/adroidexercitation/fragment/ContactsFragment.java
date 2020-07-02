@@ -39,18 +39,16 @@ public class ContactsFragment extends Fragment {
         mUsername = arguments.getString("username");
 //        mTagtext = arguments.getString(MainActivity.TAG);
         mySQLiteHelper = new MySQLiteHelper(getActivity());
-        search_for_address();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-
+        search_for_address();
         View inflate = inflater.inflate(R.layout.fragment_contact_temp, null);
         String[] contact = new String[list.size()];
         list.toArray(contact);
-//        String[] contactNames = new String[] {"啊","白菜","计洪", "韦远洪", "刘康富", "严锐", "李海东", "刘子扬", "杨汉华", "123", "456", "789", "陈晓燕", "$6", "左林", "陈圆圆", "老郭", "郭襄", "穆念慈", "东方不败", "梅超风", "林平之", "林远图", "灭绝师太", "段誉", "鸠摩智"};
         RecyclerView contactList = inflate.findViewById(R.id.contact_list);
         LetterView letterView = inflate.findViewById(R.id.letter_view);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -84,13 +82,25 @@ public class ContactsFragment extends Fragment {
     }
 
     //查找当前用户联系人
-    public void search_for_address(){
-        new Thread(){
-            @Override
-            public void run() {
-                list = DBUtils.search_for_address(mUsername, mySQLiteHelper);
-            }
-        }.start();
+    public void search_for_address() {
+        Mythread mythread = new Mythread(mUsername,mySQLiteHelper);
+        mythread.start();
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-
+    public class Mythread extends Thread {
+        private String mUsername;
+        private MySQLiteHelper mySQLiteHelper;
+        Mythread(String mUsername, MySQLiteHelper mySQLiteHelper){
+            this.mUsername = mUsername;
+            this.mySQLiteHelper = mySQLiteHelper;
+        }
+        @Override
+        public void run() {
+            list = DBUtils.search_for_address(mUsername, mySQLiteHelper);
+        }
+    }
 }
