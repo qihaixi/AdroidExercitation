@@ -62,7 +62,8 @@ public class MessageActivity extends Activity {
     private String ac_user;
     private String ta_user;
     private String ac_username, ta_username;
-    private ArrayList<String> msg_receiver;
+    private String target_username;
+//    private ArrayList<String> msg_receiver;
     private MySQLiteHelper mySQLiteHelper;
     private List<List<String>> list;
 
@@ -99,16 +100,19 @@ public class MessageActivity extends Activity {
                 @Override
                 public void onEvent(List<IMMessage> messages) {
                     // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
-                    if(!ta_user.equals(ac_user)) {
-                        for(IMMessage message : messages){
+                    for (IMMessage message : messages) {
+                        String target_user = message.getFromAccount();//得到发送方的账户
+                        findUsername(target_user);//得到发送方用户名target_username
+                        if (target_username.equals(ta_username)) {
                             PersonChat personChat = new PersonChat();
                             personChat.setMeSend(false);
                             personChat.setChatMessage(message.getContent());
 //                            saveReceiveText(message.getFromAccount(), message.getContent());//保存接收消息
                             personChats.add(personChat);
                             chatAdapter.notifyDataSetChanged();
-                            lv_chat_dialog.setSelection(personChats.size()-1);
-                    }}
+                            lv_chat_dialog.setSelection(personChats.size() - 1);
+                        }
+                    }
                 }
             };
 
@@ -125,7 +129,7 @@ public class MessageActivity extends Activity {
 //            user = (User)intent.getSerializableExtra("user");
             ta_username = intent.getStringExtra("ta_username");
             ac_username = intent.getStringExtra("ac_username");
-            msg_receiver = intent.getStringArrayListExtra("chat");
+//            msg_receiver = intent.getStringArrayListExtra("chat");
         }
         //实例化数据库帮助类
         mySQLiteHelper = new MySQLiteHelper(this);
@@ -205,15 +209,18 @@ public class MessageActivity extends Activity {
 //                startActivity(intent);
 //                finish();
                 //无需跳转，直接结束当前页面
-                latest_msg = personChats.get(personChats.size() - 1).getChatMessage();
-                Log.i("test123",latest_msg);
-                if (latest_msg != null) {
+                searchForLastestMessage();
+                if (!latest_msg.equals("")) {
+                    Log.i("test123","没到else这里");
                     Intent intent = new Intent();
                     intent.putExtra("latest_msg", latest_msg);
                     intent.putExtra("ta_username",ta_username);
                     setResult(1, intent);
+                    MessageActivity.this.finish();
+                } else {
+                    Log.i("test123","到else这里了");
+                    MessageActivity.this.finish();
                 }
-                MessageActivity.this.finish();
             }
         });
 
@@ -267,22 +274,68 @@ public class MessageActivity extends Activity {
         });
     }
 
+    private void searchForLastestMessage() {
+        Mythread_search mythread_search = new Mythread_search(ac_username, ta_username);
+        mythread_search.start();
+        try {
+            mythread_search.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public class Mythread_search extends Thread {
+        private String ac_username;
+        private String ta_username;
+        Mythread_search(String ac_username, String ta_username){
+            this.ac_username = ac_username;
+            this.ta_username = ta_username;
+        }
+        @Override
+        public void run() {
+            latest_msg = DBUtils.search_lastest_message(ac_username, ta_username, mySQLiteHelper);
+        }
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            latest_msg = personChats.get(personChats.size() - 1).getChatMessage();
-            if (latest_msg != null) {
+            searchForLastestMessage();
+            if (!latest_msg.equals("")) {
                 Intent intent = new Intent();
                 intent.putExtra("latest_msg", latest_msg);
                 intent.putExtra("ta_username",ta_username);
                 setResult(1, intent);
+                MessageActivity.this.finish();
+            } else {
+                MessageActivity.this.finish();
             }
-            MessageActivity.this.finish();
+
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
+    public void findUsername(String ta_user) {
+        ta_user = ta_user.replace("test","");
+        int user_id = Integer.parseInt(ta_user);
+        Mythread_find mythread_find = new Mythread_find(user_id);
+        mythread_find.start();
+        try {
+            mythread_find.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public class Mythread_find extends Thread {
+        private int user_id;
+        Mythread_find(int user_id){
+            this.user_id = user_id;
+        }
+        @Override
+        public void run() {
+            target_username = DBUtils.find_username(user_id);
+        }
+    }
 
     private void selectChatLogs(){
         Mythread mythread = new Mythread();
