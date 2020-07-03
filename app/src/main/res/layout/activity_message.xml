@@ -25,7 +25,10 @@
             android:layout_height="wrap_content"
             android:divider="#0000"
             android:dividerHeight="8dp"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:fastScrollEnabled="true"
+            android:transcriptMode="normal"
+            android:scrollbarStyle="insideInset">
         </ListView>
     </LinearLayout>
 

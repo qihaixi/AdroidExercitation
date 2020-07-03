@@ -45,7 +45,6 @@
             android:name=".login.LoginActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".chat.MessageActivity" />
-        <activity android:name=".main.MainActivityTest" />
         <activity
             android:name=".signup.SignUpActivity"
             android:theme="@style/AppTheme" />

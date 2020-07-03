@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -23,6 +25,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.example.adroidexercitation.database.DBUtils;
+import com.example.adroidexercitation.database.MySQLiteHelper;
+import com.example.adroidexercitation.fragment.MessageFragment;
 import com.example.adroidexercitation.main.MainActivity;
 import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.model.User;
@@ -56,10 +61,13 @@ public class MessageActivity extends Activity {
     //定义当前用户和对方用户
     private String ac_user;
     private String ta_user;
-    private String ta_username;
+    private String ac_username, ta_username;
     private ArrayList<String> msg_receiver;
+    private MySQLiteHelper mySQLiteHelper;
+    private List<List<String>> list;
 
     private TextView title_text;
+    private String latest_msg;
 
     private ChatAdapter chatAdapter;
     private ListView lv_chat_dialog;
@@ -93,13 +101,13 @@ public class MessageActivity extends Activity {
                     // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
                     if(!ta_user.equals(ac_user)) {
                         for(IMMessage message : messages){
-                        //tv_receive.setText(message.getContent());
-                        PersonChat personChat = new PersonChat();
-                        personChat.setMeSend(false);
-                        personChat.setChatMessage(message.getContent());
-                        personChats.add(personChat);
-                        chatAdapter.notifyDataSetChanged();
-                        lv_chat_dialog.setSelection(personChats.size()-1);
+                            PersonChat personChat = new PersonChat();
+                            personChat.setMeSend(false);
+                            personChat.setChatMessage(message.getContent());
+//                            saveReceiveText(message.getFromAccount(), message.getContent());//保存接收消息
+                            personChats.add(personChat);
+                            chatAdapter.notifyDataSetChanged();
+                            lv_chat_dialog.setSelection(personChats.size()-1);
                     }}
                 }
             };
@@ -116,18 +124,11 @@ public class MessageActivity extends Activity {
             ta_user = intent.getStringExtra("ta_user");
 //            user = (User)intent.getSerializableExtra("user");
             ta_username = intent.getStringExtra("ta_username");
+            ac_username = intent.getStringExtra("ac_username");
             msg_receiver = intent.getStringArrayListExtra("chat");
         }
-        //显示对方发来的消息
-        if (msg_receiver != null) {
-            for (int i=0; i<msg_receiver.size(); i++) {
-                PersonChat personChat = new PersonChat();
-                personChat.setMeSend(false);
-                personChat.setChatMessage(msg_receiver.get(i));
-                personChats.add(personChat);
-            }
-        }
-
+        //实例化数据库帮助类
+        mySQLiteHelper = new MySQLiteHelper(this);
 
         //初始化云信sdk
         NIMClient.getService(MsgServiceObserve.class)
@@ -140,6 +141,29 @@ public class MessageActivity extends Activity {
 
         chatAdapter = new ChatAdapter(this,personChats);
         lv_chat_dialog.setAdapter(chatAdapter);
+
+        //查询历史记录
+        list = new ArrayList<>();
+        List<String> msg_logs = new ArrayList<>();
+        List<String> msg_person = new ArrayList<>();
+        list.add(msg_logs);
+        list.add(msg_person);
+        selectChatLogs();
+
+        //显示历史记录
+        if (list != null) {
+            for (int i=0; i<list.get(0).size(); i++) {
+                PersonChat personChat = new PersonChat();
+                if (list.get(1).get(i).equals("1")) {
+                    personChat.setMeSend(false);
+                } else {
+                    personChat.setMeSend(true);
+                }
+                personChat.setChatMessage(list.get(0).get(i));
+                personChats.add(personChat);
+                lv_chat_dialog.setSelection(personChats.size()-1);
+            }
+        }
 
         //设置聊天标题
         title_text.setText(ta_username);
@@ -162,8 +186,11 @@ public class MessageActivity extends Activity {
                 handler.sendEmptyMessage(1);
                 //发送消息
                 sendText(et_chat_message.getText().toString());
+                //保存发送的消息到数据库
+                saveSendText(et_chat_message.getText().toString());
                 //清空输入框
                 et_chat_message.setText("");
+
             }
         });
 
@@ -178,6 +205,14 @@ public class MessageActivity extends Activity {
 //                startActivity(intent);
 //                finish();
                 //无需跳转，直接结束当前页面
+                latest_msg = personChats.get(personChats.size() - 1).getChatMessage();
+                Log.i("test123",latest_msg);
+                if (latest_msg != null) {
+                    Intent intent = new Intent();
+                    intent.putExtra("latest_msg", latest_msg);
+                    intent.putExtra("ta_username",ta_username);
+                    setResult(1, intent);
+                }
                 MessageActivity.this.finish();
             }
         });
@@ -230,6 +265,59 @@ public class MessageActivity extends Activity {
                 startActivityForResult(intent,TAKE_PHOTO);
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            latest_msg = personChats.get(personChats.size() - 1).getChatMessage();
+            if (latest_msg != null) {
+                Intent intent = new Intent();
+                intent.putExtra("latest_msg", latest_msg);
+                intent.putExtra("ta_username",ta_username);
+                setResult(1, intent);
+            }
+            MessageActivity.this.finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    private void selectChatLogs(){
+        Mythread mythread = new Mythread();
+        mythread.start();
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public class Mythread extends Thread {
+        @Override
+        public void run() {
+            list = DBUtils.select_ChatLogs(ac_username, ta_username, mySQLiteHelper);
+        }
+    }
+
+    private void saveSendText(final String logs) {
+        new Thread(){
+            @Override
+            public void run() {
+                DBUtils.save_send_logs(ac_username, ta_username, logs, mySQLiteHelper);
+            }
+        }.start();
+    }
+
+    private void saveReceiveText(final String ta_user, final String logs) {
+        new Thread(){
+            @Override
+            public void run() {
+                int user_id = Integer.parseInt(ta_user.replace("test",""));
+                String ta_username = DBUtils.find_username(user_id);
+                DBUtils.save_receive_logs(ac_username, ta_username, logs, mySQLiteHelper);
+            }
+        }.start();
     }
 
     //第三方云信即时通信

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -288,8 +289,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        NIMClient.getService(MsgServiceObserve.class)
-//                .observeReceiveMessage(incomingMessageObserver, false);
         mTabHost = null;
     }
 
@@ -318,10 +317,12 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             @Override
             public void run() {
-                id = DBUtils.select_userid(click_username);
+                id = DBUtils.select_userid(user.getUsername(), click_username);
+//                DBUtils.add_chat_logs(user.getUsername(), click_username, mySQLiteHelper);//建立聊天记录表
                 Intent intent = new Intent(MainActivity.this, MessageActivity.class);
                 intent.putExtra("ac_user","test" + user.getUser_id());
                 intent.putExtra("ta_user","test" + id);
+                intent.putExtra("ac_username",user.getUsername());
                 intent.putExtra("ta_username",tv_contact_name.getText().toString());
                 startActivity(intent);
             }
@@ -338,12 +339,13 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    //添加用户到通讯录
+    //添加用户到通讯录,添加时建立一张聊天记录存储表
     private void add_user_to_addr(final String ta_username){
         new Thread(){
             @Override
             public void run() {
                 DBUtils.add_user(user.getUsername(),ta_username,mySQLiteHelper);
+                DBUtils.add_chat_logs(user.getUsername(), ta_username, mySQLiteHelper);
             }
         }.start();
     }

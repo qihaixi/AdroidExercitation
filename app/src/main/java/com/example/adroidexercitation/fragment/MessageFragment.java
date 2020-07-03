@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.example.adroidexercitation.R;
 import com.example.adroidexercitation.chat.MessageActivity;
 import com.example.adroidexercitation.database.DBUtils;
+import com.example.adroidexercitation.database.MySQLiteHelper;
 import com.example.adroidexercitation.main.MainActivity;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -34,9 +35,12 @@ public class MessageFragment extends Fragment {
     private Context mContext;
     private DataAdapter mAdapter = null;
     private ListView list;
-    private ArrayList<String> msg_receive;
-    private String ta_username, ta_user;
+    private String ac_username, ta_username, ta_user;
     private int ac_userid;
+    private MySQLiteHelper mySQLiteHelper;
+    private ArrayList<String> msg_username;
+    private boolean is_save;
+
 
     @Override
     public void onDestroy() {
@@ -48,11 +52,14 @@ public class MessageFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //获取Activity传值
         Bundle arguments = getArguments();
         mTagtext = arguments.getString(MainActivity.TAG);
         ac_userid = arguments.getInt("userid");
-        msg_receive = new ArrayList<>();
+        ac_username = arguments.getString("username");
 
+        mySQLiteHelper = new MySQLiteHelper(getContext());
+        msg_username = new ArrayList<>();
 
         NIMClient.getService(MsgServiceObserve.class)
                 .observeReceiveMessage(incomingMessageObserver, true);
@@ -66,37 +73,68 @@ public class MessageFragment extends Fragment {
                     // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
                     for (IMMessage message : messages) {
                         //接收信息并展示
-                        ta_user = message.getFromAccount();
-                        findUsername(ta_user);
-//                        Log.i("sql",ta_username);
-                        msg_receive.add(message.getContent());
-                        if (msg_receive.size() == 1) {
-                            mData.add(new Data(ta_username, msg_receive.get(msg_receive.size()-1), R.drawable.user_head));
-                        } else {
-                            mData.remove(0);
-                            mData.add(new Data(ta_username, msg_receive.get(msg_receive.size()-1), R.drawable.user_head));
+                        //每收到一条消息就存到数据库中，ac_username，ta_username
+                        ta_user = message.getFromAccount();//得到发送方的账户
+                        findUsername(ta_user);//得到发送方用户名ta_username
+                        saveReceiveText(message.getContent());//保存接收消息
+                        if (is_save) {
+                            //建立一个数组，存储接收消息的用户名，如果数组里没有这个用户名，便增加一个聊天框，如果有，便修改聊天框并提前
+                            if (msg_username.contains(ta_username)) {
+                                int index = -1;
+                                for (int i = 0; i < mData.size(); i++) {
+                                    if (ta_username.equals(mData.get(i).getaName())) {
+                                        index = i;
+                                    }
+                                }
+                                mData.remove(index);
+                                Data data = new Data(ta_username, message.getContent(), R.drawable.user_head);
+                                mData.add(data);
+                            } else {
+                                msg_username.add(ta_username);
+                                Data data = new Data(ta_username, message.getContent(), R.drawable.user_head);
+                                mData.add(data);
+                            }
+                            mAdapter = new DataAdapter((LinkedList<Data>) mData, mContext);
+                            list.setAdapter(mAdapter);
                         }
-                        mAdapter = new DataAdapter((LinkedList<Data>) mData, mContext);
-                        list.setAdapter(mAdapter);
                     }
-
                 }
             };
 
-    public void findUsername(String ta_user) {
-        ta_user = ta_user.replace("test","");
-        int user_id = Integer.parseInt(ta_user);
-        Mythread mythread = new Mythread(user_id);
-        mythread.start();
+    private void saveReceiveText(String logs) {
+        Mythread_save mythread_save = new Mythread_save(logs);
+        mythread_save.start();
         try {
-            mythread.join();
+            mythread_save.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-    public class Mythread extends Thread {
+    public class Mythread_save extends Thread {
+        private String logs;
+        Mythread_save(String logs){
+            this.logs = logs;
+        }
+        @Override
+        public void run() {
+            is_save = DBUtils.save_receive_logs(ac_username, ta_username, logs, mySQLiteHelper);
+        }
+    }
+
+    public void findUsername(String ta_user) {
+        ta_user = ta_user.replace("test","");
+        int user_id = Integer.parseInt(ta_user);
+        Mythread_find mythread_find = new Mythread_find(user_id);
+        mythread_find.start();
+        try {
+            mythread_find.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public class Mythread_find extends Thread {
         private int user_id;
-        Mythread(int user_id){
+        Mythread_find(int user_id){
             this.user_id = user_id;
         }
         @Override
@@ -105,25 +143,57 @@ public class MessageFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            if (requestCode == 1) {
+                if (data != null) {
+                    String msg_latest_log = data.getExtras().getString("latest_msg");
+                    String ta_username = data.getExtras().getString("ta_username");
+                    Log.i("test123",msg_latest_log);
+                    if (msg_username.contains(ta_username)) {
+                        int index = -1;
+                        for (int i = 0; i < mData.size(); i++) {
+                            if (ta_username.equals(mData.get(i).getaName())) {
+                                index = i;
+                            }
+                        }
+                        mData.remove(index);
+                        mData.add(new Data(ta_username, msg_latest_log, R.drawable.user_head));
+                    } else {
+                        msg_username.add(ta_username);
+                        mData.add(new Data(ta_username, msg_latest_log, R.drawable.user_head));
+                    }
+                    mAdapter = new DataAdapter((LinkedList<Data>) mData, mContext);
+                    list.setAdapter(mAdapter);
+                }
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-        View inflate = inflater.inflate(R.layout.fragment_message, null);
+        final View inflate = inflater.inflate(R.layout.fragment_message, null);
         mContext = getContext();
         list = inflate.findViewById(R.id.list);
         mData = new LinkedList<Data>();
-        mAdapter = new DataAdapter((LinkedList<Data>) mData, mContext);
-        list.setAdapter(mAdapter);
+        //这里添加最近会话
+
+        //从数据库中查询最新一条记录并显示
+//        searchForLastestMessage();
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), MessageActivity.class);
-                intent.putExtra("chat",msg_receive);
                 intent.putExtra("ac_user", "test"+ac_userid);
                 intent.putExtra("ta_user",ta_user);
+                intent.putExtra("ac_username",ac_username);
                 intent.putExtra("ta_username",ta_username);
-                startActivity(intent);
+                startActivityForResult(intent,1);
             }
         });
 

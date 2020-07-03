@@ -13,13 +13,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DBUtils {
     // mysql版本5.6
     private static String driver = "com.mysql.jdbc.Driver";//MySQL 驱动
     // ip地址:mysql端口号，ip地址为电脑ip地址，手机和电脑需连同一个无线网
     private static String url = "jdbc:mysql://172.20.10.3:3326/test?useUnicode=true&characterEncoding=utf8";//MYSQL数据库连接Url
-//    private static String url = "jdbc:mysql://10.106.5.23:3326/test?useUnicode=true&characterEncoding=utf8";
+//    private static String url = "jdbc:mysql://192.168.43.19:3326/test?useUnicode=true&characterEncoding=utf8";
     private static String user = "root";//用户名
     private static String password = "123456";//密码
 
@@ -257,13 +258,13 @@ public class DBUtils {
     }
 
     //搜索用户id
-    public static int select_userid(String username){
+    public static int select_userid(String ac_username, String ta_username){
         Connection conn = getConn();
         PreparedStatement ps;
         try {
             String sql = "select user_id from userlogin where username=?";
             ps = conn.prepareStatement(sql);
-            ps.setString(1, username);
+            ps.setString(1, ta_username);
             ps.execute();
             ResultSet rs = ps.getResultSet();
             rs.next();
@@ -298,5 +299,78 @@ public class DBUtils {
             e.printStackTrace();
             return "未知用户";
         }
+    }
+
+    //新建聊天记录表
+    public static void add_chat_logs(String ac_username, String ta_username, MySQLiteHelper mySQLiteHelper) {
+        SQLiteDatabase db;
+        db = mySQLiteHelper.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + ac_username + "_" + ta_username + "(_id integer primary key autoincrement,chat_info varchar(100) not null,chat_person intrger not null)");
+        db.close();
+    }
+
+    //保存自己发送的聊天记录
+    public static void save_send_logs(String ac_username, String ta_username, String logs, MySQLiteHelper mySQLiteHelper) {
+        SQLiteDatabase db;
+        db = mySQLiteHelper.getWritableDatabase();
+        //chat_person:0代表自己，1代表对方
+        db.execSQL("insert into " + ac_username + "_" + ta_username + "(chat_info,chat_person) values(?,?)",new Object[]{logs, 0});
+        db.close();
+    }
+
+    //保存接收到的聊天记录
+    public static boolean save_receive_logs(String ac_username, String ta_username, String logs, MySQLiteHelper mySQLiteHelper) {
+        SQLiteDatabase db;
+        db = mySQLiteHelper.getWritableDatabase();
+        //chat_person:0代表自己，1代表对方
+        try{
+            db.execSQL("insert into " + ac_username + "_" + ta_username + "(chat_info,chat_person) values(?,?)",new Object[]{logs, 1});
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        db.close();
+        return true;
+    }
+
+    //查询聊天记录
+    public static List<List<String>> select_ChatLogs(String ac_username, String ta_username, MySQLiteHelper mySQLiteHelper){
+        SQLiteDatabase db;
+        List<List<String>> list = new ArrayList<>();
+        List<String> msg_logs = new ArrayList<>();
+        List<String> msg_person = new ArrayList<>();
+        list.add(msg_logs);
+        list.add(msg_person);
+        db = mySQLiteHelper.getWritableDatabase();
+        Cursor cursor = db.query(ac_username + "_" + ta_username,null,null,null,null,null,null);
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            msg_logs.add(cursor.getString(cursor.getColumnIndex("chat_info")));
+            msg_person.add(Integer.toString(cursor.getInt(cursor.getColumnIndex("chat_person"))));
+            while (cursor.moveToNext()) {
+                msg_logs.add(cursor.getString(cursor.getColumnIndex("chat_info")));
+                msg_person.add(Integer.toString(cursor.getInt(cursor.getColumnIndex("chat_person"))));
+            }
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public static String search_lastest_message(String ac_username, String ta_username, MySQLiteHelper mySQLiteHelper){
+        SQLiteDatabase db;
+        String logs = "";
+        db = mySQLiteHelper.getWritableDatabase();
+        Cursor cursor = db.query(ac_username + "_" + ta_username,null,null,null,null,null,null);
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            logs = cursor.getString(cursor.getColumnIndex("chat_info"));
+            while (cursor.moveToNext()) {
+                logs = cursor.getString(cursor.getColumnIndex("chat_info"));
+            }
+        }
+        cursor.close();
+        db.close();
+        return logs;
     }
 }
