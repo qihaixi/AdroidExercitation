@@ -283,7 +283,6 @@ public class DBUtils {
         Connection conn = getConn();
         PreparedStatement ps;
         try {
-            Log.i("sql", ""+user_id);
             String sql = "select username from userlogin where user_id=?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, user_id);
@@ -291,7 +290,6 @@ public class DBUtils {
             ResultSet rs = ps.getResultSet();
             rs.next();
             String result = rs.getString("username");
-            Log.i("sql",result);
             ps.close();
             conn.close();
             return result;
@@ -372,5 +370,21 @@ public class DBUtils {
         cursor.close();
         db.close();
         return logs;
+    }
+
+    public static void change_password(String username, String new_password){
+        Connection conn = getConn();
+        PreparedStatement ps;
+        try {
+            String sql = "update userlogin set password=? where username=?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, new_password);
+            ps.setString(2, username);
+            ps.execute();
+            ps.close();
+            conn.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

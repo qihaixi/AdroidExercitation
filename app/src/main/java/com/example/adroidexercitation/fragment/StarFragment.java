@@ -31,13 +31,13 @@ public class StarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
         View inflate = inflater.inflate(R.layout.fragment_star, null);
-        TextView tvText = (TextView) inflate.findViewById(R.id.tv_text);
-        if (mTagtext != null && !TextUtils.isEmpty(mTagtext)) {
-            tvText.setText(mTagtext);
-        } else {
-            Log.i(TAG, "onCreateView: mTagText -- " + mTagtext);
-            tvText.setText("Null");
-        }
+//        TextView tvText = (TextView) inflate.findViewById(R.id.tv_text);
+//        if (mTagtext != null && !TextUtils.isEmpty(mTagtext)) {
+//            tvText.setText(mTagtext);
+//        } else {
+//            Log.i(TAG, "onCreateView: mTagText -- " + mTagtext);
+//            tvText.setText("Null");
+//        }
         return inflate;
     }
 }

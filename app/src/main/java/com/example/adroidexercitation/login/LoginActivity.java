@@ -83,6 +83,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 String passwordValue=intent.getStringExtra("login_pa_fail");
                 username.setText(usernameValue);
                 password.setText(passwordValue);
+            } else if(Objects.requireNonNull(intent.getExtras()).containsKey("username_cp")){
+                //修改密码之后把用户名传回登录界面
+                String usernameValue=intent.getStringExtra("username_cp");
+                username.setText(usernameValue);
             }
         }
 
