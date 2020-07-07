@@ -60,13 +60,11 @@ public class StartActivity extends Activity {
                 }else {
                     LoginSuccess();
                 }
-
             }
         }.start();
     }
 
     public void LoginSuccess(){
-        //Log.i("tag","成功");
         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
         intent.putExtra("alusername_succ",user.getUsername());
         intent.putExtra("alpassword_succ",user.getPassword());
@@ -75,7 +73,6 @@ public class StartActivity extends Activity {
     }
 
     public void LoginFail() {
-        //Log.i("tag","失败");
         // 自动登录失败时，把上一次登录的用户名传给login页面。
         Intent intent = new Intent(StartActivity.this, LoginActivity.class);
         intent.putExtra("alusername_fail",user.getUsername());

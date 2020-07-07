@@ -61,7 +61,7 @@
 
 
         <include
-            android:id="@+id/layout_progress"
+            android:id="@+id/layout_progress1"
             android:layout_width="match_parent"
             android:layout_height="130dip"
             layout="@layout/progress_layout"

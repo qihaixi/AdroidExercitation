@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -88,11 +89,11 @@ public class MessageFragment extends Fragment {
                                 }
                                 mData.remove(index);
                                 Data data = new Data(ta_username, message.getContent(), R.drawable.user_head);
-                                mData.add(data);
+                                mData.add(0, data);
                             } else {
                                 msg_username.add(ta_username);
                                 Data data = new Data(ta_username, message.getContent(), R.drawable.user_head);
-                                mData.add(data);
+                                mData.add(0, data);
                             }
                             mAdapter = new DataAdapter((LinkedList<Data>) mData, mContext);
                             list.setAdapter(mAdapter);
@@ -151,7 +152,6 @@ public class MessageFragment extends Fragment {
                 if (data != null) {
                     String msg_latest_log = data.getExtras().getString("latest_msg");
                     String ta_username = data.getExtras().getString("ta_username");
-                    Log.i("test123",msg_latest_log);
                     if (msg_username.contains(ta_username)) {
                         int index = -1;
                         for (int i = 0; i < mData.size(); i++) {
@@ -160,10 +160,10 @@ public class MessageFragment extends Fragment {
                             }
                         }
                         mData.remove(index);
-                        mData.add(new Data(ta_username, msg_latest_log, R.drawable.user_head));
+                        mData.add(0, new Data(ta_username, msg_latest_log, R.drawable.user_head));
                     } else {
                         msg_username.add(ta_username);
-                        mData.add(new Data(ta_username, msg_latest_log, R.drawable.user_head));
+                        mData.add(0, new Data(ta_username, msg_latest_log, R.drawable.user_head));
                     }
                     mAdapter = new DataAdapter((LinkedList<Data>) mData, mContext);
                     list.setAdapter(mAdapter);
@@ -180,24 +180,32 @@ public class MessageFragment extends Fragment {
         mContext = getContext();
         list = inflate.findViewById(R.id.list);
         mData = new LinkedList<Data>();
-        //这里添加最近会话
-
-        //从数据库中查询最新一条记录并显示
-//        searchForLastestMessage();
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), MessageActivity.class);
-                intent.putExtra("ac_user", "test"+ac_userid);
-                intent.putExtra("ta_user",ta_user);
-                intent.putExtra("ac_username",ac_username);
-                intent.putExtra("ta_username",ta_username);
-                startActivityForResult(intent,1);
+                TextView text = view.findViewById(R.id.tv1);
+                select_user_id(text.getText().toString());
             }
         });
 
         return inflate;
+    }
+
+    //搜索用户id,并跳转聊天页面
+    private void select_user_id(final String click_username){
+        new Thread(){
+            @Override
+            public void run() {
+                int id = DBUtils.select_userid(click_username);
+                Intent intent = new Intent(getContext(), MessageActivity.class);
+                intent.putExtra("ac_user","test" + ac_userid);
+                intent.putExtra("ta_user","test" + id);
+                intent.putExtra("ac_username",ac_username);
+                intent.putExtra("ta_username",click_username);
+                startActivityForResult(intent,1);
+            }
+        }.start();
     }
 
 }

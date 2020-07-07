@@ -45,7 +45,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-        search_for_address();
+        search_for_address();//数据库查找通讯录
         View inflate = inflater.inflate(R.layout.fragment_contact_temp, null);
         String[] contact = new String[list.size()];
         list.toArray(contact);
@@ -70,14 +70,6 @@ public class ContactsFragment extends Fragment {
             }
         });
 
-
-//        TextView tvText = (TextView) inflate.findViewById(R.id.tv_text);
-//        if (mTagtext != null && !TextUtils.isEmpty(mTagtext)) {
-//            tvText.setText(mTagtext);
-//        } else {
-//            Log.i(TAG, "onCreateView: mTagText -- " + mTagtext);
-//            tvText.setText("Null");
-//        }
         return inflate;
     }
 

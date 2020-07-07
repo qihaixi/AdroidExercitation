@@ -69,6 +69,7 @@ public class MessageActivity extends Activity {
 
     private TextView title_text;
     private String latest_msg;
+    private boolean flag = false;
 
     private ChatAdapter chatAdapter;
     private ListView lv_chat_dialog;
@@ -104,10 +105,10 @@ public class MessageActivity extends Activity {
                         String target_user = message.getFromAccount();//得到发送方的账户
                         findUsername(target_user);//得到发送方用户名target_username
                         if (target_username.equals(ta_username)) {
+                            flag = true;//表示接受到了消息
                             PersonChat personChat = new PersonChat();
                             personChat.setMeSend(false);
                             personChat.setChatMessage(message.getContent());
-//                            saveReceiveText(message.getFromAccount(), message.getContent());//保存接收消息
                             personChats.add(personChat);
                             chatAdapter.notifyDataSetChanged();
                             lv_chat_dialog.setSelection(personChats.size() - 1);
@@ -194,7 +195,7 @@ public class MessageActivity extends Activity {
                 saveSendText(et_chat_message.getText().toString());
                 //清空输入框
                 et_chat_message.setText("");
-
+                flag = true;//表示发送了消息
             }
         });
 
@@ -211,14 +212,16 @@ public class MessageActivity extends Activity {
                 //无需跳转，直接结束当前页面
                 searchForLastestMessage();
                 if (!latest_msg.equals("")) {
-                    Log.i("test123","没到else这里");
-                    Intent intent = new Intent();
-                    intent.putExtra("latest_msg", latest_msg);
-                    intent.putExtra("ta_username",ta_username);
-                    setResult(1, intent);
+                    //如果有发送或者接收消息，便把最新消息传回
+                    if (flag) {
+                        Intent intent = new Intent();
+                        intent.putExtra("latest_msg", latest_msg);
+                        intent.putExtra("ta_username",ta_username);
+                        setResult(1, intent);
+                        flag = false;
+                    }
                     MessageActivity.this.finish();
                 } else {
-                    Log.i("test123","到else这里了");
                     MessageActivity.this.finish();
                 }
             }
@@ -301,15 +304,18 @@ public class MessageActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             searchForLastestMessage();
             if (!latest_msg.equals("")) {
-                Intent intent = new Intent();
-                intent.putExtra("latest_msg", latest_msg);
-                intent.putExtra("ta_username",ta_username);
-                setResult(1, intent);
+                //如果有发送或者接收消息，便把最新消息传回
+                if (flag) {
+                    Intent intent = new Intent();
+                    intent.putExtra("latest_msg", latest_msg);
+                    intent.putExtra("ta_username",ta_username);
+                    setResult(1, intent);
+                    flag = false;
+                }
                 MessageActivity.this.finish();
             } else {
                 MessageActivity.this.finish();
             }
-
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -375,7 +381,7 @@ public class MessageActivity extends Activity {
 
     //第三方云信即时通信
     public void sendText(String text){
-        //判断当前用户，判断当前用户点击对象的用户
+        //判断当前用户点击对象的用户
         String account = ta_user;
         SessionTypeEnum sessionType = SessionTypeEnum.P2P;
         IMMessage textMessage = MessageBuilder.createTextMessage(account, sessionType, text);

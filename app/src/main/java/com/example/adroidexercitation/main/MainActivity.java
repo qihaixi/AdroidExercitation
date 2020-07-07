@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     private MySQLiteHelper mySQLiteHelper;
     private LinearLayoutManager layoutManager;
     private ArrayList<String> list;
-    private int id;
     private ArrayList<String> receive;
 
     private String[] mTabTexts;
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
-        find_user();
+        find_all_user();
 
 
         mTvAdd.setOnClickListener(new View.OnClickListener() {
@@ -317,8 +316,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             @Override
             public void run() {
-                id = DBUtils.select_userid(user.getUsername(), click_username);
-//                DBUtils.add_chat_logs(user.getUsername(), click_username, mySQLiteHelper);//建立聊天记录表
+                int id = DBUtils.select_userid(click_username);
                 Intent intent = new Intent(MainActivity.this, MessageActivity.class);
                 intent.putExtra("ac_user","test" + user.getUser_id());
                 intent.putExtra("ta_user","test" + id);
@@ -330,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //查询所有用户
-    private void find_user(){
+    private void find_all_user(){
         new Thread(){
             @Override
             public void run() {
